@@ -1,5 +1,5 @@
 
-import { Stat, Badge, QuizItem, Agent } from './types';
+import { Stat, Badge, QuizItem, Agent, MasterIdentity } from './types';
 
 export const COLORS = {
   bg: '#000000',
@@ -21,6 +21,20 @@ export const CORE_STATS: Stat[] = [
   { label: 'Struktur', value: 70 },
   { label: 'Analyse ↔ Intuition', value: 48 },
 ];
+
+export const IDENTITY_DATA: MasterIdentity = {
+  tierkreis: "Metall Pferd",
+  monatstier: "Ziege (Wei)",
+  tagestier: "Holz-Hahn (Yi You)",
+  stundenMeister: "Metall (Jahr), Yin-Wasser (Tag-Meister)",
+  element: "Metall / Wasser Hybrid",
+  konstellation: {
+    sun: "Fische",
+    moon: "Skorpion",
+    rising: "Waage"
+  },
+  bedeutung: "Spannungsfeld zwischen hoher Sensibilität (Wasser) und rationaler Struktur (Metall); diplomatische Fassade (Waage) als Schutzschild; Bedürfnis nach Autonomie (Pferd/Wassermann)."
+};
 
 export const IDENTITY_BADGES: Badge[] = [
   { label: 'Sonne: Steinbock', type: 'western', subType: 'sun', signKey: 'capricorn' },

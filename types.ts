@@ -19,6 +19,20 @@ export interface Badge {
   icon?: string;
 }
 
+export interface MasterIdentity {
+  tierkreis: string;
+  monatstier: string;
+  tagestier: string;
+  stundenMeister: string;
+  element: string;
+  konstellation: {
+    sun: string;
+    moon: string;
+    rising: string;
+  };
+  bedeutung: string;
+}
+
 export interface QuizItem {
   id: string;
   title: string;
