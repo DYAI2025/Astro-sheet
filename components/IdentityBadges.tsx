@@ -5,10 +5,12 @@ import {
   Sparkles, Zap, Star, CircleDot, Cpu, Layers, Hexagon, Database, 
   Info, ChevronRight, ShieldCheck, Trees, Flame, 
   Mountain, Waves, Shield, TrendingUp, Anchor, Compass,
-  Orbit, Sun, Moon, ArrowUpRight, Activity
+  Orbit, Sun, Moon, ArrowUpRight, Activity, Wand2, Loader2,
+  Binary
 } from 'lucide-react';
 import SigilPortrait from './SigilPortrait';
 import { ZODIAC_DATA } from '../constants';
+import { GoogleGenAI } from "@google/genai";
 
 interface IdentityBadgesProps {
   data: MasterIdentity;
@@ -147,12 +149,15 @@ const DataRow: React.FC<{ label: string; value: React.ReactNode; icon: any; isBa
         )}
       </div>
     </div>
-    <div className={`text-sm text-[#0E1B33] font-bold tracking-tight text-right sm:max-w-[70%] transition-all relative overflow-hidden ${isBazi ? 'bg-[#F6F3EE] px-6 py-2.5 rounded-full border border-transparent shadow-[0_2px_10px_rgba(201,164,106,0.1)] group-hover:shadow-[0_4px_20px_rgba(122,167,161,0.2)]' : ''}`}>
+    <div className={`text-sm text-[#0E1B33] font-bold tracking-tight text-right sm:max-w-[70%] transition-all relative overflow-hidden ${isBazi ? 'bg-[#F6F3EE] px-7 py-3 rounded-full border border-transparent shadow-[0_4px_15px_rgba(122,167,161,0.08)] group-hover:shadow-[0_4px_25px_rgba(122,167,161,0.2)] group-hover:border-[#7AA7A1]/30 flex items-center gap-3' : ''}`}>
       {isBazi && (
         <>
           <div className="absolute inset-0 bg-gradient-to-r from-[#8F7AD1]/10 via-transparent to-[#C9A46A]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#7AA7A1]/40 to-transparent" />
           <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A46A]/40 to-transparent" />
+          {/* Holo Edge Shimmer */}
+          <div className="absolute top-0 left-[-100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] animate-[scan-shine_3s_infinite]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#7AA7A1] shadow-[0_0_8px_#7AA7A1] animate-pulse" />
         </>
       )}
       <span className="relative z-10">{value}</span>
@@ -250,58 +255,61 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
   const [activePillar, setActivePillar] = useState<number | null>(0);
   const [hoveredPillar, setHoveredPillar] = useState<number | null>(null);
   const [shineKey, setShineKey] = useState(0);
+  const [aiInsight, setAiInsight] = useState(data.bedeutung);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
-    // Trigger the shine effect whenever activePillar changes
     setShineKey(prev => prev + 1);
   }, [activePillar]);
+
+  const generateDeepInsight = async () => {
+    setIsGenerating(true);
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      const prompt = `Du bist ein Experte für Astrologie (westlich) und BaZi (chinesisch). Analysiere diese Konfiguration: 
+      Westlich: Sonne ${data.konstellation.sun}, Mond ${data.konstellation.moon}, AC ${data.konstellation.rising}.
+      BaZi: Tierkreis ${data.tierkreis}, Monatstier ${data.monatstier}, Element ${data.element}.
+      Erstelle eine tiefgründige, poetische und präzise 'Quanten-Synergie-Analyse' (ca. 60 Wörter) in Deutsch.
+      Konzentriere dich auf die Schnittmenge der beiden Systeme. Was bedeutet diese Kombination für das innere Potenzial?
+      Verwende einen modernen, retro-futuristischen Ton.`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: prompt,
+      });
+
+      if (response.text) {
+        setAiInsight(response.text.trim());
+      }
+    } catch (error) {
+      console.error("AI Insight Generation failed:", error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const tierkreisClean = data.tierkreis.replace(/\s/g, '');
   const combinedHeader = `${tierkreisClean} Sonne: ${data.konstellation.sun} AC ${data.konstellation.rising}`;
 
   const pillars = [
     { 
-      label: 'JAHR', 
-      title: 'Ahnenerbe', 
-      stem: 'Metall (Geng)', 
-      branch: 'Pferd (Wu)', 
-      element: 'Yang Metall', 
-      aspect: 'Äußeres Image',
-      hiddenStems: ['Feuer (Ding)', 'Erde (Ji)'],
-      strength: 78,
+      label: 'JAHR', title: 'Ahnenerbe', stem: 'Metall (Geng)', branch: 'Pferd (Wu)', element: 'Yang Metall', aspect: 'Äußeres Image',
+      hiddenStems: ['Feuer (Ding)', 'Erde (Ji)'], strength: 78,
       meaning: 'Dein soziales Erbe und der erste Eindruck, den du in der Welt hinterlässt. Geprägt von Disziplin und Schnelligkeit.'
     },
     { 
-      label: 'MONAT', 
-      title: 'Eltern/Karriere', 
-      stem: 'Erde (Ji)', 
-      branch: 'Ziege (Wei)', 
-      element: 'Yin Erde', 
-      aspect: 'Berufung',
-      hiddenStems: ['Erde (Ji)', 'Feuer (Ding)', 'Holz (Yi)'],
-      strength: 64,
+      label: 'MONAT', title: 'Eltern/Karriere', stem: 'Erde (Ji)', branch: 'Ziege (Wei)', element: 'Yin Erde', aspect: 'Berufung',
+      hiddenStems: ['Erde (Ji)', 'Feuer (Ding)', 'Holz (Yi)'], strength: 64,
       meaning: 'Der Ursprung deines Ehrgeizes und das Fundament deiner beruflichen Identität. Stabil und nährend.'
     },
     { 
-      label: 'TAG', 
-      title: 'Selbstkern', 
-      stem: 'Wasser (Gui)', 
-      branch: 'Hahn (You)', 
-      element: 'Yin Wasser', 
-      aspect: 'Inneres Wesen',
-      hiddenStems: ['Metall (Xin)'],
-      strength: 92,
+      label: 'TAG', title: 'Selbstkern', stem: 'Wasser (Gui)', branch: 'Hahn (You)', element: 'Yin Wasser', aspect: 'Inneres Wesen',
+      hiddenStems: ['Metall (Xin)'], strength: 92,
       meaning: 'Dein wahres Ich und dein engstes Umfeld. Eine tiefe Quelle der Intuition und analytischen Klarheit.'
     },
     { 
-      label: 'STUNDE', 
-      title: 'Zukunft/Ideale', 
-      stem: 'Metall (Xin)', 
-      branch: 'Schwein (Hai)', 
-      element: 'Yin Metall', 
-      aspect: 'Bestimmung',
-      hiddenStems: ['Wasser (Ren)', 'Holz (Jia)'],
-      strength: 55,
+      label: 'STUNDE', title: 'Zukunft/Ideale', stem: 'Metall (Xin)', branch: 'Schwein (Hai)', element: 'Yin Metall', aspect: 'Bestimmung',
+      hiddenStems: ['Wasser (Ren)', 'Holz (Jia)'], strength: 55,
       meaning: 'Deine Wünsche, Träume und das Vermächtnis, das du hinterlassen willst. Scharfsinnig und fließend.'
     },
   ];
@@ -313,7 +321,6 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
       </div>
 
       <div className="max-w-5xl mx-auto premium-card">
-        {/* Interaction Scan Shine Overlay */}
         <div key={shineKey} className="scan-shine-effect" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
@@ -357,11 +364,7 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
               <DataRow label="Monatstier" value={data.monatstier} icon={CircleDot} isBazi />
               <DataRow label="Tagestier" value={data.tagestier} icon={Zap} isBazi />
               <DataRow label="Stunden Meister" value={data.stundenMeister} icon={Cpu} isBazi />
-              <DataRow 
-                label="Element" 
-                value={<ElementBadge name={data.element} />} 
-                icon={Layers} 
-              />
+              <DataRow label="Element" value={<ElementBadge name={data.element} />} icon={Layers} />
               <DataRow 
                 label="Konstellation" 
                 value={
@@ -407,26 +410,21 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
                       <div className={`w-1 h-1 rounded-full mt-2 transition-all ${activePillar === idx ? 'bg-[#7AA7A1] scale-150 shadow-[0_0_8px_#7AA7A1]' : 'bg-[#E6E0D8]'}`} />
                     </button>
 
-                    {/* Refined Pillar Tooltip: Focus on Aspect and Hidden Stems as requested */}
                     {hoveredPillar === idx && (
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-60 bg-[#0E1B33] text-white p-5 rounded-[2rem] shadow-2xl z-[100] animate-reveal pointer-events-none border border-white/10">
                         <div className="mono text-[8px] text-[#C9A46A] font-extrabold uppercase tracking-[0.4em] mb-3 border-b border-white/10 pb-2 flex items-center gap-2">
                           <Activity size={10} className="animate-pulse" /> Pillar_Data_Link
                         </div>
-                        
                         <div className="space-y-4">
                           <div>
                             <span className="mono text-[7px] uppercase text-white/40 tracking-wider block mb-1">Domäne / Aspect</span>
                             <div className="text-[12px] font-bold text-[#7AA7A1] leading-tight">{p.aspect}</div>
                           </div>
-                          
                           <div>
                             <span className="mono text-[7px] uppercase text-white/40 tracking-wider block mb-2">Verborgene Stämme</span>
                             <div className="flex flex-wrap gap-1.5">
                               {p.hiddenStems.map((s, i) => (
-                                <span key={i} className="text-[9px] bg-white/5 px-2 py-1 rounded-lg border border-white/10 text-white/90 font-bold">
-                                  {s}
-                                </span>
+                                <span key={i} className="text-[9px] bg-white/5 px-2 py-1 rounded-lg border border-white/10 text-white/90 font-bold">{s}</span>
                               ))}
                             </div>
                           </div>
@@ -439,21 +437,15 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
               </div>
 
               <div className={`bg-[#F6F3EE] rounded-3xl p-8 border border-[#E6E0D8] transition-all duration-500 relative overflow-hidden shadow-inner ${activePillar !== null ? 'min-h-[220px]' : 'min-h-0'}`}>
-                {/* Visual scan line during detail expansion */}
                 <div className={`absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-[#7AA7A1] to-[#C9A46A] transition-all duration-700 ${activePillar !== null ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'}`} />
-                
-                <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none">
-                  <Hexagon size={160} />
-                </div>
+                <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none"><Hexagon size={160} /></div>
                 
                 {activePillar !== null ? (
                   <div className="animate-reveal relative z-10 w-full" key={`pillar-detail-${activePillar}`}>
                     <div className="flex justify-between items-start mb-6">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="mono text-[10px] font-bold text-[#C9A46A] uppercase tracking-widest">
-                            <ElementBadge name={pillars[activePillar].element} />
-                          </span>
+                          <span className="mono text-[10px] font-bold text-[#C9A46A] uppercase tracking-widest"><ElementBadge name={pillars[activePillar].element} /></span>
                           <span className="w-1 h-1 rounded-full bg-[#E6E0D8]" />
                           <span className="mono text-[9px] text-[#A1A1AA] uppercase tracking-widest font-bold">Pillar_Expanded_Details</span>
                         </div>
@@ -461,52 +453,29 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#E6E0D8] shadow-sm">
-                          <TrendingUp size={12} className="text-[#7AA7A1]" />
-                          <span className="mono text-[9px] font-bold text-[#0E1B33]">{pillars[activePillar].strength}% Kraft</span>
+                          <TrendingUp size={12} className="text-[#7AA7A1]" /><span className="mono text-[9px] font-bold text-[#0E1B33]">{pillars[activePillar].strength}% Kraft</span>
                         </div>
                         <span className="mono text-[7px] text-[#A1A1AA] uppercase tracking-widest">Resonanz_Level</span>
                       </div>
                     </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Anchor size={12} className="text-[#0E1B33] opacity-40" />
-                          <span className="mono text-[8px] uppercase text-[#5A6477] font-bold tracking-wider">Himmelsstamm</span>
-                        </div>
-                        <div className="text-sm font-bold text-[#0E1B33] bg-white px-3 py-2 rounded-xl border border-[#E6E0D8]/60 inline-block shadow-sm">
-                          {pillars[activePillar].stem}
-                        </div>
+                        <div className="flex items-center gap-2"><Anchor size={12} className="text-[#0E1B33] opacity-40" /><span className="mono text-[8px] uppercase text-[#5A6477] font-bold tracking-wider">Himmelsstamm</span></div>
+                        <div className="text-sm font-bold text-[#0E1B33] bg-white px-3 py-2 rounded-xl border border-[#E6E0D8]/60 inline-block shadow-sm">{pillars[activePillar].stem}</div>
                       </div>
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Compass size={12} className="text-[#0E1B33] opacity-40" />
-                          <span className="mono text-[8px] uppercase text-[#5A6477] font-bold tracking-wider">Erdzweig</span>
-                        </div>
-                        <div className="text-sm font-bold text-[#0E1B33] bg-white px-3 py-2 rounded-xl border border-[#E6E0D8]/60 inline-block shadow-sm">
-                          {pillars[activePillar].branch}
-                        </div>
+                        <div className="flex items-center gap-2"><Compass size={12} className="text-[#0E1B33] opacity-40" /><span className="mono text-[8px] uppercase text-[#5A6477] font-bold tracking-wider">Erdzweig</span></div>
+                        <div className="text-sm font-bold text-[#0E1B33] bg-white px-3 py-2 rounded-xl border border-[#E6E0D8]/60 inline-block shadow-sm">{pillars[activePillar].branch}</div>
                       </div>
                       <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Layers size={12} className="text-[#C9A46A]" />
-                          <span className="mono text-[8px] uppercase text-[#C9A46A] font-bold tracking-wider">Verborgene Stämme</span>
-                        </div>
+                        <div className="flex items-center gap-2"><Layers size={12} className="text-[#C9A46A]" /><span className="mono text-[8px] uppercase text-[#C9A46A] font-bold tracking-wider">Verborgene Stämme</span></div>
                         <div className="flex flex-wrap gap-2">
-                          {pillars[activePillar].hiddenStems.map((s, i) => (
-                            <span key={i} className="text-[11px] font-bold text-[#5A6477] bg-[#E6E0D8]/30 px-2 py-1 rounded-md border border-[#E6E0D8]/60">
-                              {s}
-                            </span>
-                          ))}
+                          {pillars[activePillar].hiddenStems.map((s, i) => (<span key={i} className="text-[11px] font-bold text-[#5A6477] bg-[#E6E0D8]/30 px-2 py-1 rounded-md border border-[#E6E0D8]/60">{s}</span>))}
                         </div>
                       </div>
                     </div>
-
                     <div className="mt-8 pt-6 border-t border-[#E6E0D8]/60">
-                      <p className="text-[#5A6477] text-xs leading-relaxed italic font-medium">
-                        <Info size={12} className="inline mr-2 text-[#C9A46A]" />
-                        {pillars[activePillar].meaning}
-                      </p>
+                      <p className="text-[#5A6477] text-xs leading-relaxed italic font-medium"><Info size={12} className="inline mr-2 text-[#C9A46A]" />{pillars[activePillar].meaning}</p>
                     </div>
                   </div>
                 ) : (
@@ -520,20 +489,69 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
 
             <PlanetaryVisualization konstellation={data.konstellation} />
 
-            <div className="relative mt-12">
-              <div className="absolute top-5 left-8 px-3 py-1 bg-[#C9A46A] text-white mono text-[10px] font-bold uppercase tracking-[0.3em] rounded-md shadow-lg z-10">
-                Einsicht
+            <div className="relative mt-24 group/ai">
+              <div className="absolute -top-6 left-10 px-5 py-2 bg-[#0E1B33] text-white mono text-[11px] font-bold uppercase tracking-[0.4em] rounded-full shadow-2xl z-20 border border-white/20 flex items-center gap-3">
+                <Sparkles size={14} className="text-[#C9A46A] animate-pulse" />
+                Quantum_Synergy_Module
               </div>
-              <div className="bg-[#F6F3EE] rounded-[2rem] p-10 border border-[#C9A46A]/20 relative overflow-hidden group shadow-sm">
-                <h4 className="mono text-[10px] font-extrabold text-[#C9A46A] uppercase tracking-[0.4em] mb-4 opacity-80 flex items-center gap-2">
-                  <Sparkles size={12} />
-                  Synergie-Analyse
-                </h4>
-                <p className="text-[#0E1B33] italic font-light leading-relaxed serif text-xl relative z-10">
-                  "{data.bedeutung}"
-                </p>
-                <div className="absolute top-0 right-0 p-4 opacity-[0.05]">
-                  <Sparkles size={40} />
+
+              <div className="bg-white rounded-[3rem] p-16 border border-[#C9A46A]/30 relative overflow-hidden shadow-[0_15px_50px_-10px_rgba(201,164,106,0.15)] transition-all hover:shadow-[0_20px_60px_-10px_rgba(201,164,106,0.25)] group">
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none overflow-hidden mono text-[7px] text-[#0E1B33] p-8 leading-tight">
+                   {Array.from({ length: 20 }).map((_, i) => (
+                     <div key={i}>PROC_THREAD_{i}: CROSS_SYSTEM_COMPATIBILITY_{Math.random().toString(36).substring(7)}</div>
+                   ))}
+                </div>
+
+                <div className="relative z-10 flex flex-col md:flex-row gap-16 items-start">
+                  <div className="flex-grow">
+                    <div className="flex items-center gap-4 mb-3">
+                       <Binary size={16} className="text-[#7AA7A1] opacity-60" />
+                       <h4 className="mono text-[12px] font-extrabold text-[#C9A46A] uppercase tracking-[0.6em] opacity-80">Synergy Analysis</h4>
+                    </div>
+                    <h3 className="serif text-4xl lg:text-5xl font-light text-[#0E1B33] tracking-tighter mb-8 border-b border-[#E6E0D8]/50 pb-6 uppercase">Cross-System Compatibility</h3>
+                    
+                    <div className="relative min-h-[120px]">
+                      {isGenerating ? (
+                        <div className="flex flex-col items-center justify-center py-12 gap-5 animate-pulse bg-[#F6F3EE]/40 rounded-3xl border border-dashed border-[#E6E0D8]">
+                          <Loader2 size={36} className="text-[#C9A46A] animate-spin" />
+                          <span className="mono text-[11px] text-[#5A6477] uppercase tracking-[0.3em] font-bold">Resonanz-Matrix wird kalibriert...</span>
+                        </div>
+                      ) : (
+                        <div className="p-2">
+                           <p className="text-[#0E1B33] italic font-light leading-relaxed serif text-3xl animate-reveal">
+                            "{aiInsight}"
+                          </p>
+                          <div className="mt-8 flex gap-3">
+                             <div className="px-3 py-1 bg-[#F6F3EE] rounded-md border border-[#E6E0D8] mono text-[8px] text-[#5A6477] font-bold uppercase tracking-widest">Source: BaZi</div>
+                             <div className="px-3 py-1 bg-[#F6F3EE] rounded-md border border-[#E6E0D8] mono text-[8px] text-[#5A6477] font-bold uppercase tracking-widest">Source: Western</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-5 shrink-0 pt-10 md:pt-4">
+                    <button 
+                      onClick={generateDeepInsight}
+                      disabled={isGenerating}
+                      className="group/btn relative px-10 py-5 bg-[#0E1B33] rounded-2xl overflow-hidden transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-2xl shadow-[#0E1B33]/20"
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#8F7AD1] via-[#7AA7A1] to-[#C9A46A] opacity-0 group-hover/btn:opacity-30 transition-opacity" />
+                      <div className="relative z-10 flex items-center gap-3 text-white">
+                        <Wand2 size={18} className="text-[#C9A46A] group-hover/btn:rotate-[30deg] transition-transform" />
+                        <span className="mono text-[11px] font-extrabold uppercase tracking-[0.4em]">Deep_Calibration</span>
+                      </div>
+                    </button>
+                    
+                    <div className="flex items-center gap-3 px-5 py-3 bg-[#F6F3EE] rounded-xl border border-[#E6E0D8] shadow-sm">
+                      <Activity size={12} className="text-[#7AA7A1]" />
+                      <span className="mono text-[9px] text-[#5A6477] font-bold uppercase tracking-widest">System: Gemini_3_Flash</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-0 right-0 p-8 opacity-[0.07] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
+                  <Sparkles size={100} />
                 </div>
               </div>
             </div>
