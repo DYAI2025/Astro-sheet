@@ -11,18 +11,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-night: #020b1a;
-      --bg-sunrise: #f6f3ee;
-      --surface: #0F3045;
-      --accent-teal: #6CA192;
-      --accent-purple: #8B5A8B;
-      --accent-gold: #D2A95A;
-      --text-primary: #F7F0E6;
-      --muted: #71717A;
+      --bg-paper: #F6F3EE;
+      --navy: #0E1B33;
+      --muted: #5A6477;
+      --stroke: #E6E0D8;
+      --holo-violet: #8F7AD1;
+      --holo-cyan: #7AA7A1;
+      --holo-gold: #C9A46A;
     }
     body {
       font-family: 'Inter', sans-serif;
-      color: var(--text-primary);
+      color: var(--navy);
+      background-color: var(--bg-paper);
       overflow-x: hidden;
       min-height: 100vh;
     }
@@ -32,68 +32,79 @@
     .mono {
       font-family: 'IBM Plex Mono', monospace;
     }
-    
-    /* Premium Night Blue to Sunrise White/Yellow Gradient */
-    .enterprise-bg {
-      background: linear-gradient(180deg, 
-        #020b1a 0%, 
-        #0e1b33 40%, 
-        #d2a95a 85%, 
-        #f6f3ee 100%
-      );
-      background-attachment: fixed;
+
+    /* Subtle background star-map pattern */
+    .bg-pattern {
+      background-image: radial-gradient(var(--navy) 0.5px, transparent 0.5px);
+      background-size: 40px 40px;
+      opacity: 0.03;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    /* Screen Reflection Effect */
-    .glass-reflection {
+    /* Card with holographic top edge */
+    .premium-card {
+      background: #FFFFFF;
+      border: 1px solid var(--stroke);
+      border-radius: 2.5rem;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 10px 30px -10px rgba(14, 27, 51, 0.05);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .glass-reflection::before {
+    .premium-card::before {
       content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.03) 45%,
-        rgba(255, 255, 255, 0.07) 50%,
-        rgba(255, 255, 255, 0.03) 55%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      transform: rotate(-25deg);
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    /* Scanline Effect */
-    .scanline {
-      width: 100%;
-      height: 2px;
-      background: rgba(108, 161, 146, 0.1);
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 20;
-      animation: scan 8s linear infinite;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--holo-violet) 25%, 
+        var(--holo-cyan) 50%, 
+        var(--holo-gold) 75%, 
+        transparent 100%
+      );
+      opacity: 0.6;
+      z-index: 10;
+    }
+
+    .dark-premium-card {
+      background: var(--navy);
+      border-radius: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      color: #FFFFFF;
+      box-shadow: 0 20px 40px -15px rgba(14, 27, 51, 0.3);
+    }
+    .dark-premium-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        var(--holo-violet), 
+        var(--holo-cyan), 
+        var(--holo-gold)
+      );
+      opacity: 0.8;
+      z-index: 10;
+    }
+
+    .cluster-title {
+      font-size: 8rem;
+      line-height: 1;
+      opacity: 0.04; /* Low contrast for background writing */
       pointer-events: none;
-    }
-
-    @keyframes scan {
-      0% { top: 0; }
-      100% { top: 100%; }
-    }
-
-    .glow-teal { filter: drop-shadow(0 0 8px rgba(108, 161, 146, 0.5)); }
-    .glow-gold { filter: drop-shadow(0 0 10px rgba(210, 169, 90, 0.4)); }
-    
-    .lcars-border {
-      border-left: 4px solid var(--accent-teal);
-      border-top: 4px solid var(--accent-teal);
-      border-top-left-radius: 20px;
+      user-select: none;
+      letter-spacing: 0.25em;
+      color: var(--navy);
+      font-weight: 300;
     }
 
     @keyframes rotate {
@@ -101,30 +112,39 @@
       to { transform: rotate(360deg); }
     }
     .animate-spin-slow {
-      animation: rotate 120s linear infinite;
-    }
-
-    .cluster-title {
-      font-size: 8rem;
-      line-height: 1;
-      opacity: 0.05;
-      pointer-events: none;
-      user-select: none;
-      letter-spacing: 0.25em;
-      color: var(--accent-gold);
+      animation: rotate 180s linear infinite;
     }
     
     @keyframes revealUp {
-      from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+      from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
       to { opacity: 1; transform: translateY(0); filter: blur(0); }
     }
     .animate-reveal {
-      animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: revealUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--accent-teal); border-radius: 10px; }
+    /* Segmented Bar Styling */
+    .segmented-bar {
+      display: flex;
+      gap: 2px;
+      height: 6px;
+      width: 100%;
+    }
+    .segment {
+      flex: 1;
+      height: 100%;
+      background: var(--stroke);
+      border-radius: 1px;
+      transition: background 1s ease-out;
+    }
+    .segment.active {
+      background: var(--navy);
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-paper); }
+    ::-webkit-scrollbar-thumb { background: var(--stroke); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
   </style>
 <script type="importmap">
 {
@@ -137,7 +157,8 @@
 }
 </script>
 </head>
-<body class="enterprise-bg">
+<body>
+  <div class="bg-pattern"></div>
   <div id="root"></div>
 </body>
 </html>

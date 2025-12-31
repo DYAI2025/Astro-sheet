@@ -1,68 +1,66 @@
 
 import React from 'react';
-import { User, HelpCircle, Bot, Sparkles, Settings, AlertCircle, Compass, Monitor } from 'lucide-react';
+import { User, HelpCircle, Bot, Sparkles, Settings, AlertCircle, LayoutDashboard, Compass, PieChart, FileText } from 'lucide-react';
 import { UserProfile } from '../types';
 
 interface SidebarProps { user: UserProfile; }
 
 const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   const navItems = [
-    { icon: Compass, label: 'Navigation', active: true },
-    { icon: Monitor, label: 'Data Stream' },
-    { icon: User, label: 'Manifest' },
-    { icon: Bot, label: 'AI Core' },
-    { icon: Sparkles, label: 'Warp Drive', premium: true },
-    { icon: Settings, label: 'Configs' },
+    { icon: LayoutDashboard, label: 'Dashboard', active: true },
+    { icon: User, label: 'Profil' },
+    { icon: PieChart, label: 'Quizzes' },
+    { icon: Bot, label: 'Agenten' },
+    { icon: Sparkles, label: 'Premium', premium: true },
+    { icon: Settings, label: 'Einstellungen' },
   ];
 
   return (
-    <aside className="w-[260px] h-screen fixed left-0 top-0 border-r border-white/10 bg-black flex flex-col p-8 z-50 glass-reflection">
-      <div className="scanline" />
-      <div className="mb-12 pt-4">
-        <h1 className="serif text-4xl text-white font-light tracking-tighter flex items-baseline gap-1">
-          ASTRO<span className="text-[#D2A95A] font-bold">.</span>
+    <aside className="w-[260px] h-screen fixed left-0 top-0 border-r border-[#E6E0D8] bg-white flex flex-col p-10 z-50">
+      <div className="mb-20">
+        <h1 className="serif text-3xl text-[#0E1B33] font-light tracking-tighter flex items-center gap-2">
+          ASTRO<span className="w-2 h-2 rounded-full bg-[#C9A46A]"></span>CHARACTER
         </h1>
-        <div className="text-[9px] mono uppercase tracking-[0.4em] text-[#6CA192] mt-2 font-bold">ENT-SPEC_V4</div>
+        <div className="text-[9px] mono uppercase tracking-[0.5em] text-[#A1A1AA] mt-3 font-bold">REFL_PROTOCOL_v1</div>
       </div>
 
-      <div className="bg-[#0F3045] rounded-xl p-6 mb-12 flex items-center gap-4 border border-white/5 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-16 h-16 bg-[#D2A95A]/10 blur-xl rounded-full" />
-        <div className="w-12 h-12 rounded-lg bg-black border border-[#D2A95A]/40 flex items-center justify-center text-[#D2A95A] text-2xl serif glow-gold relative z-10">
+      <div className="bg-[#F6F3EE] rounded-3xl p-6 mb-16 flex items-center gap-4 border border-[#E6E0D8] group cursor-pointer hover:border-[#C9A46A] transition-all shadow-sm">
+        <div className="w-12 h-12 rounded-2xl bg-[#0E1B33] flex items-center justify-center text-white text-xl serif shadow-lg transform transition-transform group-hover:scale-105">
           {user.name[0]}
         </div>
-        <div className="relative z-10">
-          <div className="text-sm font-bold text-white tracking-tight">{user.name}</div>
-          <div className="text-[9px] text-[#6CA192] uppercase tracking-[0.2em] font-bold mt-1">Level {user.level}</div>
+        <div>
+          <div className="text-sm font-bold text-[#0E1B33] tracking-tight">{user.name}</div>
+          <div className="text-[9px] text-[#5A6477] uppercase tracking-[0.2em] font-bold mt-1">Level {user.level}</div>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-3">
+      <nav className="flex-1 space-y-4">
         {navItems.map((item) => (
           <button
             key={item.label}
-            className={`w-full flex items-center gap-4 px-5 py-4 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+            className={`w-full flex items-center gap-5 px-6 py-4 rounded-2xl transition-all duration-300 relative overflow-hidden group ${
               item.active 
-                ? 'text-white' 
-                : 'text-[#6CA192] hover:text-white hover:bg-white/5'
+                ? 'bg-[#0E1B33] text-white shadow-xl shadow-[#0E1B33]/20' 
+                : 'text-[#5A6477] hover:text-[#0E1B33] hover:bg-[#F6F3EE]'
             }`}
           >
-            {item.active && <div className="absolute inset-y-0 left-0 w-1 bg-[#D2A95A]" />}
-            {item.active && <div className="absolute inset-0 bg-[#D2A95A]/5" />}
-            <item.icon size={18} className={`relative z-10 transition-colors ${item.active ? 'text-[#D2A95A]' : ''} ${item.premium ? 'text-[#8B5A8B]' : ''}`} />
-            <span className="text-[11px] font-bold uppercase tracking-[0.25em] relative z-10">{item.label}</span>
+            <item.icon size={18} className={`relative z-10 transition-colors ${item.active ? 'text-[#7AA7A1]' : ''} ${item.premium ? 'text-[#C9A46A]' : ''}`} />
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.3em] relative z-10">{item.label}</span>
           </button>
         ))}
       </nav>
 
-      <div className="mt-auto pt-8 border-t border-white/10">
-        <div className="bg-[#0F3045]/40 rounded-xl p-5 text-[10px] leading-relaxed text-[#71717A] border border-white/5 backdrop-blur-md relative overflow-hidden">
-          <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-[#6CA192]/10 blur-lg rounded-full" />
-          <div className="flex items-center gap-2 mb-3 font-bold text-[#F7F0E6] uppercase tracking-[0.2em]">
-            <AlertCircle size={14} className="text-[#D2A95A]" />
-            SENSOR LOGS
+      <div className="mt-auto pt-10">
+        <div className="bg-[#0E1B33] rounded-[2rem] p-8 text-[11px] leading-relaxed text-white/50 border border-white/5 shadow-2xl relative overflow-hidden">
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#C9A46A]/10 blur-3xl rounded-full" />
+          <div className="flex items-center gap-3 mb-4 font-bold text-white uppercase tracking-[0.3em]">
+            <AlertCircle size={14} className="text-[#C9A46A]" />
+            Transparenz
           </div>
-          <p className="font-medium text-[#6CA192] mb-1">DATA INTEGRITY: HIGH</p>
-          <p className="opacity-60 text-[9px] italic">"The stars are not just maps, they are patterns of the soul."</p>
+          <p className="font-bold text-white mb-2 uppercase tracking-wide">Berechnet ≠ Deutung</p>
+          <p className="opacity-60 text-[10px] italic leading-snug">
+            Dieses Dashboard dient ausschließlich der Reflexion und Unterhaltung.
+          </p>
         </div>
       </div>
     </aside>

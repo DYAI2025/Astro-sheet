@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Agent } from '../types';
-import { Sparkles, MessageSquare } from 'lucide-react';
+import { Sparkles, MessageSquare, Bot } from 'lucide-react';
 
 interface AgentsSectionProps {
   agents: Agent[];
@@ -9,33 +9,46 @@ interface AgentsSectionProps {
 
 const AgentsSection: React.FC<AgentsSectionProps> = ({ agents }) => {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-[#E6E0D8] shadow-sm">
-      <h3 className="text-[10px] uppercase tracking-widest font-bold text-[#5A6477] mb-6">KI Agenten</h3>
-      <div className="space-y-4">
+    <div className="premium-card p-10 flex flex-col h-full">
+      <div className="flex items-center gap-4 mb-10 border-b border-[#E6E0D8] pb-8">
+        <div className="p-3 bg-[#F6F3EE] rounded-xl">
+           <Bot size={20} className="text-[#0E1B33]" />
+        </div>
+        <div>
+          <h3 className="text-[11px] uppercase tracking-[0.4em] font-extrabold text-[#5A6477]">KI Agenten</h3>
+          <div className="text-[9px] mono text-[#A1A1AA] mt-1">Status: Active_Listen</div>
+        </div>
+      </div>
+
+      <div className="space-y-6 flex-grow">
         {agents.map((agent) => (
-          <div key={agent.id} className="p-4 rounded-xl bg-[#F6F3EE]/50 border border-[#E6E0D8] flex flex-col gap-3">
+          <div key={agent.id} className="p-6 rounded-3xl bg-[#F6F3EE]/50 border border-[#E6E0D8] flex flex-col gap-6 hover:border-[#8F7AD1] transition-all group">
             <div className="flex justify-between items-start">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#0E1B33] tracking-tighter">{agent.name}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full border border-[#E6E0D8] text-[#5A6477] font-medium uppercase tracking-widest">
+                <div className="flex items-center gap-3">
+                  <span className="text-md font-bold text-[#0E1B33] tracking-tight">{agent.name}</span>
+                  <span className="text-[9px] px-2.5 py-1 rounded-full border border-[#E6E0D8] bg-white text-[#5A6477] font-extrabold uppercase tracking-[0.2em]">
                     {agent.type}
                   </span>
                 </div>
-                <p className="text-[11px] text-[#5A6477] mt-1">{agent.description}</p>
+                <p className="text-[12px] text-[#5A6477] mt-2 font-light leading-relaxed">{agent.description}</p>
               </div>
-              {agent.premium && <Sparkles size={14} className="text-[#C9A46A]" />}
+              {agent.premium && <Sparkles size={16} className="text-[#C9A46A] group-hover:scale-110 transition-transform" />}
             </div>
             
-            <button className={`w-full py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+            <button className={`w-full py-3.5 rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all ${
               agent.premium 
-                ? 'bg-[#0E1B33] text-white hover:shadow-lg hover:shadow-[#0E1B33]/20' 
+                ? 'bg-[#0E1B33] text-white hover:bg-[#8F7AD1] shadow-xl shadow-[#0E1B33]/10' 
                 : 'bg-white border border-[#E6E0D8] text-[#0E1B33] hover:border-[#8F7AD1]'
             }`}>
               {agent.premium ? 'Live (Premium)' : 'Vorstellen'}
             </button>
           </div>
         ))}
+      </div>
+
+      <div className="mt-10 pt-8 border-t border-[#E6E0D8] text-center">
+         <span className="mono text-[8px] text-[#A1A1AA] uppercase tracking-[0.3em]">Quantum_Core: Ready</span>
       </div>
     </div>
   );

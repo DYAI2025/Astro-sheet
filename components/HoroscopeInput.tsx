@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, User, Sparkles, Loader2, Search, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, Sparkles, Loader2, Search, CheckCircle2, CalendarDays } from 'lucide-react';
 
 interface HoroscopeInputProps {
   onCalculate: (data: any) => void;
@@ -11,156 +11,157 @@ const HoroscopeInput: React.FC<HoroscopeInputProps> = ({ onCalculate }) => {
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
+    year: '',
     date: '',
     time: '',
     timeUnknown: false,
     location: '',
   });
 
+  // Generate a range of years for the BaZi-specific dropdown
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 121 }, (_, i) => (currentYear - i).toString());
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate calculation process
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
       onCalculate(formData);
       setTimeout(() => setSuccess(false), 3000);
-    }, 2000);
+    }, 2500);
   };
 
   return (
-    <div className="relative group max-w-4xl mx-auto mb-20">
-      <div className="absolute inset-0 bg-gradient-to-r from-[#D2A95A]/20 via-[#6CA192]/20 to-[#D2A95A]/20 blur-3xl opacity-30 group-hover:opacity-50 transition-opacity" />
-      
-      <div className="relative bg-[#0F3045]/40 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 p-10 overflow-hidden glass-reflection shadow-3xl">
-        <div className="scanline opacity-10" />
-        
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Sparkles size={18} className="text-[#D2A95A] animate-pulse" />
-              <span className="mono text-[10px] text-[#6CA192] font-bold tracking-[0.5em] uppercase">Initial_Data_Entry</span>
-            </div>
-            <h2 className="serif text-4xl text-white font-light">Horoskop-Konfiguration</h2>
+    <div className="max-w-4xl mx-auto premium-card p-14 relative group">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
+        <div>
+          <div className="flex items-center gap-4 mb-3">
+             <div className="w-1.5 h-1.5 rounded-full bg-[#C9A46A]" />
+             <span className="mono text-[11px] text-[#5A6477] font-bold tracking-[0.6em] uppercase">Calibration_Input</span>
           </div>
-          <div className="px-4 py-2 bg-black/40 rounded-lg border border-[#6CA192]/20 mono text-[9px] text-[#6CA192] tracking-widest uppercase">
-            Status: Ready_For_Input
+          <h2 className="serif text-5xl text-[#0E1B33] font-light">Horoskop-Konfiguration</h2>
+        </div>
+        <div className="px-6 py-2 border border-[#E6E0D8] rounded-full mono text-[9px] text-[#5A6477] font-bold uppercase tracking-widest bg-[#F6F3EE]">
+           System: Ready
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        {/* Profile Name */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 mono text-[11px] text-[#0E1B33] uppercase font-extrabold tracking-widest ml-1">
+            <User size={14} /> Profilname
+          </label>
+          <input
+            type="text"
+            placeholder="Name eintragen..."
+            className="w-full bg-[#F6F3EE] border border-[#E6E0D8] rounded-2xl px-6 py-5 text-[#0E1B33] placeholder:text-[#A1A1AA] focus:outline-none focus:border-[#C9A46A] transition-all"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
+        </div>
+
+        {/* Birth Place */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 mono text-[11px] text-[#0E1B33] uppercase font-extrabold tracking-widest ml-1">
+            <MapPin size={14} /> Geburtsort
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Stadt suchen..."
+              className="w-full bg-[#F6F3EE] border border-[#E6E0D8] rounded-2xl px-6 py-5 pl-14 text-[#0E1B33] placeholder:text-[#A1A1AA] focus:outline-none focus:border-[#C9A46A] transition-all"
+              value={formData.location}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              required
+            />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-[#A1A1AA]" size={16} />
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Profile Name */}
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 mono text-[10px] text-[#6CA192] uppercase font-bold tracking-widest ml-1">
-              <User size={12} /> Profil-Identität
+        {/* Birth Year Dropdown (Mandatory for BaZi) */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 mono text-[11px] text-[#0E1B33] uppercase font-extrabold tracking-widest ml-1">
+            <CalendarDays size={14} /> Geburtsjahr <span className="text-[#C9A46A] text-[8px] tracking-tight">(BAZI_REQ)</span>
+          </label>
+          <select
+            className="w-full bg-[#F6F3EE] border border-[#E6E0D8] rounded-2xl px-6 py-5 text-[#0E1B33] focus:outline-none focus:border-[#C9A46A] transition-all appearance-none cursor-pointer"
+            value={formData.year}
+            onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+            required
+          >
+            <option value="" disabled>Jahr wählen...</option>
+            {years.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
+
+        {/* Birth Date (Day/Month) */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-3 mono text-[11px] text-[#0E1B33] uppercase font-extrabold tracking-widest ml-1">
+            <Calendar size={14} /> Tag & Monat
+          </label>
+          <input
+            type="date"
+            className="w-full bg-[#F6F3EE] border border-[#E6E0D8] rounded-2xl px-6 py-5 text-[#0E1B33] focus:outline-none focus:border-[#C9A46A] transition-all [color-scheme:light]"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            required
+          />
+        </div>
+
+        {/* Birth Time */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center px-1">
+            <label className="flex items-center gap-3 mono text-[11px] text-[#0E1B33] uppercase font-extrabold tracking-widest">
+              <Clock size={14} /> Geburtszeit
             </label>
-            <input
-              type="text"
-              placeholder="Z.B. JULIAN S."
-              className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-[#D2A95A]/60 transition-all focus:ring-1 focus:ring-[#D2A95A]/20"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-          </div>
-
-          {/* Birth Place */}
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 mono text-[10px] text-[#6CA192] uppercase font-bold tracking-widest ml-1">
-              <MapPin size={12} /> Geburtsort
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Stadt, Land eingeben..."
-                className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 pl-12 text-white placeholder:text-white/20 focus:outline-none focus:border-[#D2A95A]/60 transition-all"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                required
-              />
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
-            </div>
-          </div>
-
-          {/* Birth Date */}
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 mono text-[10px] text-[#6CA192] uppercase font-bold tracking-widest ml-1">
-              <Calendar size={12} /> Geburtsdatum
-            </label>
-            <input
-              type="date"
-              className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-[#D2A95A]/60 transition-all [color-scheme:dark]"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              required
-            />
-          </div>
-
-          {/* Birth Time */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center px-1">
-              <label className="flex items-center gap-2 mono text-[10px] text-[#6CA192] uppercase font-bold tracking-widest">
-                <Clock size={12} /> Geburtszeit
-              </label>
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, timeUnknown: !formData.timeUnknown })}
-                className={`text-[9px] mono uppercase tracking-widest font-bold transition-colors ${formData.timeUnknown ? 'text-[#D2A95A]' : 'text-white/40 hover:text-white'}`}
-              >
-                {formData.timeUnknown ? '[X] Unbekannt' : '[ ] Unbekannt'}
-              </button>
-            </div>
-            <input
-              type="time"
-              disabled={formData.timeUnknown}
-              className={`w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/20 focus:outline-none transition-all [color-scheme:dark] ${formData.timeUnknown ? 'opacity-30 cursor-not-allowed' : 'focus:border-[#D2A95A]/60'}`}
-              value={formData.timeUnknown ? '12:00' : formData.time}
-              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-              required={!formData.timeUnknown}
-            />
-          </div>
-
-          {/* Action Button */}
-          <div className="md:col-span-2 pt-6">
             <button
-              type="submit"
-              disabled={loading}
-              className={`w-full relative py-5 rounded-2xl text-[12px] font-extrabold uppercase tracking-[0.5em] transition-all overflow-hidden flex items-center justify-center gap-3
-                ${loading 
-                  ? 'bg-white/5 text-white/50 cursor-wait' 
-                  : success 
-                    ? 'bg-[#6CA192] text-black' 
-                    : 'bg-[#D2A95A] text-black hover:bg-white hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]'}`}
+              type="button"
+              onClick={() => setFormData({ ...formData, timeUnknown: !formData.timeUnknown })}
+              className={`text-[10px] mono uppercase tracking-widest font-bold transition-colors ${formData.timeUnknown ? 'text-[#C9A46A]' : 'text-[#A1A1AA] hover:text-[#0E1B33]'}`}
             >
-              {loading ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  BERECHNE_MATRIX...
-                </>
-              ) : success ? (
-                <>
-                  <CheckCircle2 size={18} />
-                  CALCULATION_COMPLETE
-                </>
-              ) : (
-                <>
-                  <Sparkles size={18} />
-                  Horoskop berechnen
-                </>
-              )}
-              
-              {/* Shine effect on button */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[glint_4s_infinite]" />
+              {formData.timeUnknown ? '[X] Unbekannt' : '[ ] Unbekannt'}
             </button>
-            <div className="mt-4 text-center">
-              <span className="mono text-[8px] text-[#6CA192] uppercase tracking-[0.4em] opacity-60">
-                Precision: high_fidelity • Source: swiss_ephemeris_v2
-              </span>
-            </div>
           </div>
-        </form>
-      </div>
+          <input
+            type="time"
+            disabled={formData.timeUnknown}
+            className={`w-full bg-[#F6F3EE] border border-[#E6E0D8] rounded-2xl px-6 py-5 text-[#0E1B33] focus:outline-none transition-all [color-scheme:light] ${formData.timeUnknown ? 'opacity-30 cursor-not-allowed' : 'focus:border-[#C9A46A]'}`}
+            value={formData.timeUnknown ? '12:00' : formData.time}
+            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+            required={!formData.timeUnknown}
+          />
+        </div>
+
+        {/* Action Button */}
+        <div className="md:col-span-2 pt-10">
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-6 rounded-3xl text-[12px] font-extrabold uppercase tracking-[0.5em] transition-all flex items-center justify-center gap-4
+              ${loading 
+                ? 'bg-[#E6E0D8] text-[#5A6477] cursor-wait' 
+                : success 
+                  ? 'bg-[#7AA7A1] text-white shadow-xl shadow-[#7AA7A1]/20' 
+                  : 'bg-[#0E1B33] text-white hover:bg-[#8F7AD1] hover:shadow-2xl hover:shadow-[#0E1B33]/30'}`}
+          >
+            {loading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : success ? (
+              <CheckCircle2 size={18} />
+            ) : (
+              <Sparkles size={18} />
+            )}
+            {loading ? 'CALIBRATING...' : success ? 'CALCULATION_COMPLETE' : 'Horoskop berechnen'}
+          </button>
+          <p className="mt-6 text-center mono text-[9px] text-[#A1A1AA] uppercase tracking-[0.4em]">
+            Precision: Enhanced • Engine: Swiss_Ephemeris_v10
+          </p>
+        </div>
+      </form>
     </div>
   );
 };
