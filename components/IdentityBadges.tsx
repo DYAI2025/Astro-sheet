@@ -5,7 +5,7 @@ import {
   Sparkles, Zap, Star, CircleDot, Cpu, Layers, Hexagon, Database, 
   Info, ChevronRight, ShieldCheck, Trees, Flame, 
   Mountain, Waves, Shield, TrendingUp, Anchor, Compass,
-  Orbit, Sun, Moon, ArrowUpRight
+  Orbit, Sun, Moon, ArrowUpRight, Activity
 } from 'lucide-react';
 import SigilPortrait from './SigilPortrait';
 import { ZODIAC_DATA } from '../constants';
@@ -129,91 +129,132 @@ const ZodiacBadge: React.FC<{ sign: string; prefix?: string }> = ({ sign, prefix
 };
 
 const DataRow: React.FC<{ label: string; value: React.ReactNode; icon: any; isBazi?: boolean }> = ({ label, value, icon: Icon, isBazi }) => (
-  <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between py-6 border-b border-[#E6E0D8]/60 last:border-0 hover:bg-[#0E1B33]/[0.02] px-2 transition-all duration-300 group relative ${isBazi ? 'pl-6' : ''}`}>
+  <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between py-6 border-b border-[#E6E0D8]/60 last:border-0 hover:bg-[#0E1B33]/[0.02] px-2 transition-all duration-300 group relative ${isBazi ? 'pl-8' : ''}`}>
     {isBazi && (
-      <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[#7AA7A1] via-[#C9A46A] to-[#8F7AD1] opacity-60 shadow-[0_0_8px_rgba(201,164,106,0.3)]" />
+      <div className="absolute left-0 top-3 bottom-3 w-[4px] rounded-full bg-gradient-to-b from-[#8F7AD1] via-[#7AA7A1] to-[#C9A46A] opacity-80 shadow-[0_0_12px_rgba(122,167,161,0.4)] animate-pulse" />
     )}
     <div className="flex items-center gap-4 mb-2 sm:mb-0">
-      <div className={`p-2 bg-white rounded-lg border border-[#E6E0D8] group-hover:border-[#C9A46A] transition-colors shadow-sm ${isBazi ? 'bg-gradient-to-br from-white to-[#F6F3EE] border-[#7AA7A1]/30' : ''}`}>
+      <div className={`p-2 bg-white rounded-lg border border-[#E6E0D8] group-hover:border-[#C9A46A] transition-colors shadow-sm ${isBazi ? 'bg-gradient-to-br from-white to-[#F6F3EE] border-[#7AA7A1]/40' : ''}`}>
         <Icon size={14} className={`text-[#5A6477] group-hover:text-[#0E1B33] ${isBazi ? 'text-[#7AA7A1]' : ''}`} />
       </div>
       <div className="flex flex-col">
         <span className="mono text-[10px] text-[#5A6477] font-bold uppercase tracking-[0.4em]">{label}</span>
-        {isBazi && <span className="mono text-[7px] text-[#C9A46A] uppercase tracking-[0.2em] font-extrabold">BAZI_PROTOCOL</span>}
+        {isBazi && (
+          <span className="flex items-center gap-1.5 mt-0.5">
+            <span className="w-1 h-1 rounded-full bg-[#7AA7A1] animate-ping" />
+            <span className="mono text-[7px] text-[#7AA7A1] uppercase tracking-[0.2em] font-extrabold">BAZI_QUANTUM_FEED</span>
+          </span>
+        )}
       </div>
     </div>
-    <div className={`text-sm text-[#0E1B33] font-bold tracking-tight text-right sm:max-w-[70%] ${isBazi ? 'bg-[#F6F3EE] px-4 py-1.5 rounded-full border border-[#C9A46A]/20 shadow-sm' : ''}`}>
-      {value}
+    <div className={`text-sm text-[#0E1B33] font-bold tracking-tight text-right sm:max-w-[70%] transition-all relative overflow-hidden ${isBazi ? 'bg-[#F6F3EE] px-6 py-2.5 rounded-full border border-transparent shadow-[0_2px_10px_rgba(201,164,106,0.1)] group-hover:shadow-[0_4px_20px_rgba(122,167,161,0.2)]' : ''}`}>
+      {/* Holographic Overlays for BaZi rows */}
+      {isBazi && (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#8F7AD1]/10 via-transparent to-[#C9A46A]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#7AA7A1]/40 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A46A]/40 to-transparent" />
+        </>
+      )}
+      <span className="relative z-10">{value}</span>
     </div>
   </div>
 );
 
 const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellation }) => {
   return (
-    <div className="relative w-full aspect-video bg-[#0E1B33] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl mt-12 group/align">
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <svg width="100%" height="100%" viewBox="0 0 800 400">
-           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-             <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5"/>
-           </pattern>
-           <rect width="100%" height="100%" fill="url(#grid)" />
+    <div className="relative w-full aspect-video bg-[#0E1B33] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl mt-12 group/align cursor-crosshair">
+      {/* Dynamic Background Pattern - Sacred Geometry */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <svg width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="metatron" width="200" height="200" patternUnits="userSpaceOnUse">
+              <circle cx="100" cy="100" r="80" fill="none" stroke="white" strokeWidth="1" />
+              <path d="M100 20 L169.28 60 L169.28 140 L100 180 L30.72 140 L30.72 60 Z" fill="none" stroke="white" strokeWidth="0.5" />
+              <path d="M100 20 L30.72 140 M169.28 60 L30.72 60 M169.28 140 L100 20 M100 180 L169.28 60 M30.72 140 L169.28 140 M30.72 60 L100 180" fill="none" stroke="white" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#metatron)" />
         </svg>
       </div>
 
       <div className="absolute inset-0 flex items-center justify-center">
         <svg viewBox="0 0 400 200" className="w-full h-full p-10 overflow-visible">
-          {/* Central Point */}
-          <circle cx="200" cy="100" r="1.5" fill="#7AA7A1" className="animate-pulse" />
-          <circle cx="200" cy="100" r="40" fill="none" stroke="white" strokeWidth="0.2" strokeDasharray="2 4" className="animate-spin-slow opacity-20" />
+          {/* Sideric Compass Rings */}
+          <circle cx="200" cy="100" r="85" fill="none" stroke="white" strokeWidth="0.1" strokeDasharray="1 5" className="animate-spin-slow" />
+          <circle cx="200" cy="100" r="65" fill="none" stroke="white" strokeWidth="0.2" strokeDasharray="10 20" style={{ animation: 'rotate 120s linear infinite reverse' }} className="opacity-20" />
           
-          {/* Sun Alignment */}
-          <g className="animate-reveal" style={{ animationDelay: '0.2s' }}>
+          {/* Central Resonance Point */}
+          <circle cx="200" cy="100" r="2" fill="#7AA7A1" className="animate-pulse" />
+          <circle cx="200" cy="100" r="4" fill="none" stroke="#7AA7A1" strokeWidth="0.5" className="animate-ping opacity-30" />
+          
+          {/* Aspect Lines - Geometric Connections */}
+          <g className="opacity-40">
+            {/* Sun-Moon Connection (Trine/Square Abstract) */}
+            <path d="M 100 40 Q 200 20 280 60" fill="none" stroke="#C9A46A" strokeWidth="0.3" strokeDasharray="2 2" className="animate-pulse" />
+            {/* Moon-Rising Connection */}
+            <path d="M 280 60 Q 300 100 160 150" fill="none" stroke="#8F7AD1" strokeWidth="0.3" strokeDasharray="2 2" />
+            {/* Sun-Rising Connection */}
+            <path d="M 100 40 Q 120 100 160 150" fill="none" stroke="#7AA7A1" strokeWidth="0.3" strokeDasharray="2 2" />
+          </g>
+
+          {/* Sun Alignment - Core Essence */}
+          <g className="animate-reveal group/sun" style={{ animationDelay: '0.2s' }}>
              <line x1="200" y1="100" x2="100" y2="40" stroke="#C9A46A" strokeWidth="0.5" strokeDasharray="1 3" />
-             <circle cx="100" cy="40" r="6" fill="#0E1B33" stroke="#C9A46A" strokeWidth="1" />
-             <circle cx="100" cy="40" r="2" fill="#C9A46A" className="animate-pulse" />
-             <text x="85" y="30" className="mono text-[4px] fill-[#C9A46A] uppercase font-bold tracking-widest">SUN_{konstellation.sun.toUpperCase()}</text>
+             <circle cx="100" cy="40" r="7" fill="#0E1B33" stroke="#C9A46A" strokeWidth="1" className="group-hover/sun:scale-125 transition-transform" />
+             <text x="100" y="42" textAnchor="middle" className="text-[6px] fill-[#C9A46A] select-none font-bold">☉</text>
+             <text x="85" y="30" className="mono text-[4px] fill-[#C9A46A] uppercase font-bold tracking-widest opacity-0 group-hover/sun:opacity-100 transition-opacity">SUN_{konstellation.sun.toUpperCase()}</text>
           </g>
 
-          {/* Moon Alignment */}
-          <g className="animate-reveal" style={{ animationDelay: '0.4s' }}>
+          {/* Moon Alignment - Emotional Depth */}
+          <g className="animate-reveal group/moon" style={{ animationDelay: '0.4s' }}>
              <line x1="200" y1="100" x2="280" y2="60" stroke="#8F7AD1" strokeWidth="0.5" strokeDasharray="1 3" />
-             <path d="M 280 54 A 6 6 0 1 1 274 60" fill="none" stroke="#8F7AD1" strokeWidth="1" />
-             <text x="285" y="55" className="mono text-[4px] fill-[#8F7AD1] uppercase font-bold tracking-widest">MOON_{konstellation.moon.toUpperCase()}</text>
+             <circle cx="280" cy="60" r="7" fill="#0E1B33" stroke="#8F7AD1" strokeWidth="1" className="group-hover/moon:scale-125 transition-transform" />
+             <text x="280" y="62" textAnchor="middle" className="text-[6px] fill-[#8F7AD1] select-none font-bold">☽</text>
+             <text x="285" y="52" className="mono text-[4px] fill-[#8F7AD1] uppercase font-bold tracking-widest opacity-0 group-hover/moon:opacity-100 transition-opacity">MOON_{konstellation.moon.toUpperCase()}</text>
           </g>
 
-          {/* Rising Alignment */}
-          <g className="animate-reveal" style={{ animationDelay: '0.6s' }}>
+          {/* Rising Alignment - Social Persona */}
+          <g className="animate-reveal group/asc" style={{ animationDelay: '0.6s' }}>
              <line x1="200" y1="100" x2="160" y2="150" stroke="#7AA7A1" strokeWidth="0.5" strokeDasharray="1 3" />
-             <rect x="156" y="146" width="8" height="8" rx="1" fill="#0E1B33" stroke="#7AA7A1" strokeWidth="1" />
-             <line x1="158" y1="150" x2="162" y2="150" stroke="#7AA7A1" strokeWidth="0.5" />
-             <text x="145" y="165" className="mono text-[4px] fill-[#7AA7A1] uppercase font-bold tracking-widest">ASC_{konstellation.rising.toUpperCase()}</text>
+             <circle cx="160" cy="150" r="7" fill="#0E1B33" stroke="#7AA7A1" strokeWidth="1" className="group-hover/asc:scale-125 transition-transform" />
+             <text x="160" y="152" textAnchor="middle" className="text-[5px] fill-[#7AA7A1] select-none font-bold uppercase">AC</text>
+             <text x="145" y="165" className="mono text-[4px] fill-[#7AA7A1] uppercase font-bold tracking-widest opacity-0 group-hover/asc:opacity-100 transition-opacity">ASC_{konstellation.rising.toUpperCase()}</text>
           </g>
 
-          {/* Aspect Lines (Abstract Geometric) */}
-          <path d="M 100 40 L 280 60 L 160 150 Z" fill="rgba(143, 122, 209, 0.05)" stroke="white" strokeWidth="0.1" className="animate-pulse" />
+          {/* Energy Field Mesh */}
+          <path d="M 100 40 L 280 60 L 160 150 Z" fill="rgba(201, 164, 106, 0.05)" stroke="white" strokeWidth="0.1" className="animate-pulse" />
         </svg>
       </div>
 
+      {/* Top Left Labeling */}
       <div className="absolute top-8 left-10 flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <Orbit size={14} className="text-[#C9A46A]" />
-          <span className="mono text-[9px] font-extrabold text-white/50 uppercase tracking-[0.4em]">Planetary_Alignments</span>
+          <span className="mono text-[9px] font-extrabold text-white/50 uppercase tracking-[0.4em]">Celestial_Resonance_Map</span>
         </div>
         <div className="text-[10px] text-white serif italic opacity-80">Geometrische Resonanz der Geburtsmatrix</div>
       </div>
 
-      <div className="absolute bottom-8 right-10 flex gap-6">
-        <div className="flex items-center gap-2">
-          <Sun size={10} className="text-[#C9A46A]" />
-          <span className="mono text-[8px] text-white/30 uppercase tracking-widest">Core</span>
+      {/* Bottom Right Legend */}
+      <div className="absolute bottom-8 right-10 flex flex-col items-end gap-3">
+        <div className="flex gap-6">
+          <div className="flex items-center gap-2">
+            <Sun size={10} className="text-[#C9A46A]" />
+            <span className="mono text-[8px] text-white/30 uppercase tracking-widest font-bold">Essenz</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Moon size={10} className="text-[#8F7AD1]" />
+            <span className="mono text-[8px] text-white/30 uppercase tracking-widest font-bold">Reflexion</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ArrowUpRight size={10} className="text-[#7AA7A1]" />
+            <span className="mono text-[8px] text-white/30 uppercase tracking-widest font-bold">Projektion</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Moon size={10} className="text-[#8F7AD1]" />
-          <span className="mono text-[8px] text-white/30 uppercase tracking-widest">Psyche</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <ArrowUpRight size={10} className="text-[#7AA7A1]" />
-          <span className="mono text-[8px] text-white/30 uppercase tracking-widest">Persona</span>
+        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
+           <Activity size={10} className="text-[#7AA7A1] animate-pulse" />
+           <span className="mono text-[7px] text-white/60 uppercase tracking-[0.2em] font-bold">Sync: 104.2ms</span>
         </div>
       </div>
     </div>

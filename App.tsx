@@ -9,7 +9,7 @@ import QuizzesCard from './components/QuizzesCard';
 import AgentsSection from './components/AgentsSection';
 import HoroscopeInput from './components/HoroscopeInput';
 import { CORE_STATS, IDENTITY_DATA, QUIZZES, AGENTS } from './constants';
-import { Search, Bell, Sparkles, Terminal, Activity } from 'lucide-react';
+import { Search, Activity } from 'lucide-react';
 
 const App: React.FC = () => {
   const user = {
@@ -59,18 +59,26 @@ const App: React.FC = () => {
             <IdentityBadges data={IDENTITY_DATA} />
           </section>
 
-          {/* Daily Horoscope - Full Width Featured Section */}
-          <section className="space-y-12">
-            <div className="animate-reveal" style={{ animationDelay: '0.2s' }}>
-              <DailyQuest />
-            </div>
-            
-            {/* Agents Section moved below the Horoscope for more space */}
-            <div className="grid grid-cols-12 animate-reveal" style={{ animationDelay: '0.25s' }}>
-              <div className="col-span-12">
-                <AgentsSection agents={AGENTS} />
-              </div>
-            </div>
+          {/* Daily Horoscope - Oracle Section */}
+          <section className="space-y-24 animate-reveal" style={{ animationDelay: '0.2s' }}>
+             <div className="text-center relative">
+                <div className="cluster-title absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">ORACLE</div>
+                <div className="relative z-10">
+                  <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[#7AA7A1] mb-5">Daily_Transit</div>
+                  <h2 className="serif text-7xl font-light text-[#0E1B33] tracking-tighter">Heutige Resonanz</h2>
+                </div>
+             </div>
+             
+             <div className="space-y-12">
+               <DailyQuest />
+               
+               {/* Agents Section directly integrated into the Oracle flow */}
+               <div className="grid grid-cols-12">
+                 <div className="col-span-12">
+                   <AgentsSection agents={AGENTS} />
+                 </div>
+               </div>
+             </div>
           </section>
 
           {/* Progress & Stats - High Contrast Block */}
