@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MasterIdentity } from '../types';
 import { 
   Sparkles, Zap, Star, CircleDot, Cpu, Layers, Hexagon, Database, 
@@ -148,7 +148,6 @@ const DataRow: React.FC<{ label: string; value: React.ReactNode; icon: any; isBa
       </div>
     </div>
     <div className={`text-sm text-[#0E1B33] font-bold tracking-tight text-right sm:max-w-[70%] transition-all relative overflow-hidden ${isBazi ? 'bg-[#F6F3EE] px-6 py-2.5 rounded-full border border-transparent shadow-[0_2px_10px_rgba(201,164,106,0.1)] group-hover:shadow-[0_4px_20px_rgba(122,167,161,0.2)]' : ''}`}>
-      {/* Holographic Overlays for BaZi rows */}
       {isBazi && (
         <>
           <div className="absolute inset-0 bg-gradient-to-r from-[#8F7AD1]/10 via-transparent to-[#C9A46A]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
@@ -164,7 +163,6 @@ const DataRow: React.FC<{ label: string; value: React.ReactNode; icon: any; isBa
 const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellation }) => {
   return (
     <div className="relative w-full aspect-video bg-[#0E1B33] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl mt-12 group/align cursor-crosshair">
-      {/* Dynamic Background Pattern - Sacred Geometry */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
         <svg width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
           <defs>
@@ -180,25 +178,17 @@ const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellatio
 
       <div className="absolute inset-0 flex items-center justify-center">
         <svg viewBox="0 0 400 200" className="w-full h-full p-10 overflow-visible">
-          {/* Sideric Compass Rings */}
           <circle cx="200" cy="100" r="85" fill="none" stroke="white" strokeWidth="0.1" strokeDasharray="1 5" className="animate-spin-slow" />
           <circle cx="200" cy="100" r="65" fill="none" stroke="white" strokeWidth="0.2" strokeDasharray="10 20" style={{ animation: 'rotate 120s linear infinite reverse' }} className="opacity-20" />
-          
-          {/* Central Resonance Point */}
           <circle cx="200" cy="100" r="2" fill="#7AA7A1" className="animate-pulse" />
           <circle cx="200" cy="100" r="4" fill="none" stroke="#7AA7A1" strokeWidth="0.5" className="animate-ping opacity-30" />
           
-          {/* Aspect Lines - Geometric Connections */}
           <g className="opacity-40">
-            {/* Sun-Moon Connection (Trine/Square Abstract) */}
             <path d="M 100 40 Q 200 20 280 60" fill="none" stroke="#C9A46A" strokeWidth="0.3" strokeDasharray="2 2" className="animate-pulse" />
-            {/* Moon-Rising Connection */}
             <path d="M 280 60 Q 300 100 160 150" fill="none" stroke="#8F7AD1" strokeWidth="0.3" strokeDasharray="2 2" />
-            {/* Sun-Rising Connection */}
             <path d="M 100 40 Q 120 100 160 150" fill="none" stroke="#7AA7A1" strokeWidth="0.3" strokeDasharray="2 2" />
           </g>
 
-          {/* Sun Alignment - Core Essence */}
           <g className="animate-reveal group/sun" style={{ animationDelay: '0.2s' }}>
              <line x1="200" y1="100" x2="100" y2="40" stroke="#C9A46A" strokeWidth="0.5" strokeDasharray="1 3" />
              <circle cx="100" cy="40" r="7" fill="#0E1B33" stroke="#C9A46A" strokeWidth="1" className="group-hover/sun:scale-125 transition-transform" />
@@ -206,7 +196,6 @@ const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellatio
              <text x="85" y="30" className="mono text-[4px] fill-[#C9A46A] uppercase font-bold tracking-widest opacity-0 group-hover/sun:opacity-100 transition-opacity">SUN_{konstellation.sun.toUpperCase()}</text>
           </g>
 
-          {/* Moon Alignment - Emotional Depth */}
           <g className="animate-reveal group/moon" style={{ animationDelay: '0.4s' }}>
              <line x1="200" y1="100" x2="280" y2="60" stroke="#8F7AD1" strokeWidth="0.5" strokeDasharray="1 3" />
              <circle cx="280" cy="60" r="7" fill="#0E1B33" stroke="#8F7AD1" strokeWidth="1" className="group-hover/moon:scale-125 transition-transform" />
@@ -214,7 +203,6 @@ const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellatio
              <text x="285" y="52" className="mono text-[4px] fill-[#8F7AD1] uppercase font-bold tracking-widest opacity-0 group-hover/moon:opacity-100 transition-opacity">MOON_{konstellation.moon.toUpperCase()}</text>
           </g>
 
-          {/* Rising Alignment - Social Persona */}
           <g className="animate-reveal group/asc" style={{ animationDelay: '0.6s' }}>
              <line x1="200" y1="100" x2="160" y2="150" stroke="#7AA7A1" strokeWidth="0.5" strokeDasharray="1 3" />
              <circle cx="160" cy="150" r="7" fill="#0E1B33" stroke="#7AA7A1" strokeWidth="1" className="group-hover/asc:scale-125 transition-transform" />
@@ -222,12 +210,10 @@ const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellatio
              <text x="145" y="165" className="mono text-[4px] fill-[#7AA7A1] uppercase font-bold tracking-widest opacity-0 group-hover/asc:opacity-100 transition-opacity">ASC_{konstellation.rising.toUpperCase()}</text>
           </g>
 
-          {/* Energy Field Mesh */}
           <path d="M 100 40 L 280 60 L 160 150 Z" fill="rgba(201, 164, 106, 0.05)" stroke="white" strokeWidth="0.1" className="animate-pulse" />
         </svg>
       </div>
 
-      {/* Top Left Labeling */}
       <div className="absolute top-8 left-10 flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <Orbit size={14} className="text-[#C9A46A]" />
@@ -236,7 +222,6 @@ const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellatio
         <div className="text-[10px] text-white serif italic opacity-80">Geometrische Resonanz der Geburtsmatrix</div>
       </div>
 
-      {/* Bottom Right Legend */}
       <div className="absolute bottom-8 right-10 flex flex-col items-end gap-3">
         <div className="flex gap-6">
           <div className="flex items-center gap-2">
@@ -264,6 +249,12 @@ const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellatio
 const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
   const [activePillar, setActivePillar] = useState<number | null>(0);
   const [hoveredPillar, setHoveredPillar] = useState<number | null>(null);
+  const [shineKey, setShineKey] = useState(0);
+
+  useEffect(() => {
+    // Trigger the shine effect whenever activePillar changes
+    setShineKey(prev => prev + 1);
+  }, [activePillar]);
 
   const tierkreisClean = data.tierkreis.replace(/\s/g, '');
   const combinedHeader = `${tierkreisClean} Sonne: ${data.konstellation.sun} AC ${data.konstellation.rising}`;
@@ -322,6 +313,9 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
       </div>
 
       <div className="max-w-5xl mx-auto premium-card">
+        {/* Interaction Scan Shine Overlay */}
+        <div key={shineKey} className="scan-shine-effect" />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
           <div className="lg:col-span-5 p-12 lg:border-r border-[#E6E0D8] flex flex-col items-center justify-center relative bg-[#F6F3EE]/40">
             <div className="absolute top-10 left-10 flex items-center gap-3">
@@ -391,7 +385,6 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
                 </div>
               </div>
               
-              {/* Pillar Tabs Grid */}
               <div className="grid grid-cols-4 gap-3 mb-6 relative">
                 {pillars.map((p, idx) => (
                   <div key={idx} className="relative group/tab">
@@ -405,45 +398,35 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
                           : 'bg-white border-[#E6E0D8] text-[#5A6477] hover:border-[#C9A46A] hover:bg-[#F6F3EE] hover:scale-[1.02]'
                       }`}
                     >
-                      {/* BaZi Holo Edge for Tabs */}
                       <div className={`absolute top-0 left-0 right-0 h-[3px] transition-all duration-500 ${
                         activePillar === idx ? 'opacity-100 scale-x-100' : 'opacity-40 scale-x-75 group-hover/tab:opacity-100 group-hover/tab:scale-x-100'
                       }`} style={{ background: 'linear-gradient(90deg, #8F7AD1, #7AA7A1, #C9A46A)' }} />
                       
                       <span className="mono text-[9px] font-bold tracking-widest mb-1">{p.label}</span>
                       <span className="text-[10px] opacity-60 uppercase font-medium">{p.title}</span>
-                      
-                      {/* Sub-label Indicator */}
                       <div className={`w-1 h-1 rounded-full mt-2 transition-all ${activePillar === idx ? 'bg-[#7AA7A1] scale-150 shadow-[0_0_8px_#7AA7A1]' : 'bg-[#E6E0D8]'}`} />
                     </button>
 
-                    {/* Hover Quick-Peek Tooltip: Enhanced with Stems, Branches, and Elements */}
-                    {hoveredPillar === idx && activePillar !== idx && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-56 bg-[#0E1B33] text-white p-4 rounded-2xl shadow-2xl z-[100] animate-reveal pointer-events-none border border-white/10">
-                        <div className="mono text-[7px] text-[#C9A46A] font-bold uppercase tracking-[0.4em] mb-2 border-b border-white/10 pb-1">Quick_Peek_Matrix</div>
-                        <div className="text-[12px] font-bold mb-3 text-[#7AA7A1]">{p.aspect}</div>
+                    {/* Refined Pillar Tooltip: Focus on Aspect and Hidden Stems as requested */}
+                    {hoveredPillar === idx && (
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-60 bg-[#0E1B33] text-white p-5 rounded-[2rem] shadow-2xl z-[100] animate-reveal pointer-events-none border border-white/10">
+                        <div className="mono text-[8px] text-[#C9A46A] font-extrabold uppercase tracking-[0.4em] mb-3 border-b border-white/10 pb-2 flex items-center gap-2">
+                          <Activity size={10} className="animate-pulse" /> Pillar_Data_Link
+                        </div>
                         
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-center gap-4">
-                            <span className="mono text-[7px] uppercase text-white/40 tracking-wider">Stamm</span>
-                            <span className="text-[10px] font-bold">{p.stem}</span>
-                          </div>
-                          <div className="flex justify-between items-center gap-4">
-                            <span className="mono text-[7px] uppercase text-white/40 tracking-wider">Zweig</span>
-                            <span className="text-[10px] font-bold">{p.branch}</span>
-                          </div>
-                          <div className="flex justify-between items-center gap-4">
-                            <span className="mono text-[7px] uppercase text-white/40 tracking-wider">Element</span>
-                            <div className="text-[9px] font-bold text-[#C9A46A] flex items-center gap-1">
-                              <ElementBadge name={p.element} />
-                            </div>
+                        <div className="space-y-4">
+                          <div>
+                            <span className="mono text-[7px] uppercase text-white/40 tracking-wider block mb-1">Domäne / Aspect</span>
+                            <div className="text-[12px] font-bold text-[#7AA7A1] leading-tight">{p.aspect}</div>
                           </div>
                           
-                          <div className="pt-2 border-t border-white/5">
-                            <span className="mono text-[7px] uppercase text-white/30 block mb-1">Verborgene Stämme</span>
-                            <div className="flex flex-wrap gap-1">
+                          <div>
+                            <span className="mono text-[7px] uppercase text-white/40 tracking-wider block mb-2">Verborgene Stämme</span>
+                            <div className="flex flex-wrap gap-1.5">
                               {p.hiddenStems.map((s, i) => (
-                                <span key={i} className="text-[8px] bg-white/5 px-1.5 py-0.5 rounded border border-white/10 text-white/80">{s}</span>
+                                <span key={i} className="text-[9px] bg-white/5 px-2 py-1 rounded-lg border border-white/10 text-white/90 font-bold">
+                                  {s}
+                                </span>
                               ))}
                             </div>
                           </div>
@@ -455,14 +438,16 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
                 ))}
               </div>
 
-              {/* Detailed Pillar Inspection Panel */}
               <div className={`bg-[#F6F3EE] rounded-3xl p-8 border border-[#E6E0D8] transition-all duration-500 relative overflow-hidden shadow-inner ${activePillar !== null ? 'min-h-[220px]' : 'min-h-0'}`}>
+                {/* Visual scan line during detail expansion */}
+                <div className={`absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-[#7AA7A1] to-[#C9A46A] transition-all duration-700 ${activePillar !== null ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'}`} />
+                
                 <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none">
                   <Hexagon size={160} />
                 </div>
                 
                 {activePillar !== null ? (
-                  <div className="animate-reveal relative z-10 w-full" key={activePillar}>
+                  <div className="animate-reveal relative z-10 w-full" key={`pillar-detail-${activePillar}`}>
                     <div className="flex justify-between items-start mb-6">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
@@ -470,7 +455,7 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
                             <ElementBadge name={pillars[activePillar].element} />
                           </span>
                           <span className="w-1 h-1 rounded-full bg-[#E6E0D8]" />
-                          <span className="mono text-[9px] text-[#A1A1AA] uppercase tracking-widest font-bold">Pillar_Expanded</span>
+                          <span className="mono text-[9px] text-[#A1A1AA] uppercase tracking-widest font-bold">Pillar_Expanded_Details</span>
                         </div>
                         <h5 className="serif text-3xl text-[#0E1B33] leading-none">{pillars[activePillar].aspect}</h5>
                       </div>
@@ -533,7 +518,6 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
               </div>
             </div>
 
-            {/* Planetary Alignment Visualization */}
             <PlanetaryVisualization konstellation={data.konstellation} />
 
             <div className="relative mt-12">

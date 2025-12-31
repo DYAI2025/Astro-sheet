@@ -123,6 +123,30 @@
       animation: revealUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
+    @keyframes scan-shine {
+      0% { left: -100%; opacity: 0; }
+      20% { opacity: 0.4; }
+      80% { opacity: 0.4; }
+      100% { left: 100%; opacity: 0; }
+    }
+    .scan-shine-effect {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 40%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(122, 167, 161, 0.3), 
+        rgba(255, 255, 255, 0.1),
+        rgba(122, 167, 161, 0.3),
+        transparent
+      );
+      transform: skewX(-20deg);
+      pointer-events: none;
+      z-index: 20;
+      animation: scan-shine 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
     /* Segmented Bar Styling */
     .segmented-bar {
       display: flex;
