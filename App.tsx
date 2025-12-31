@@ -59,13 +59,17 @@ const App: React.FC = () => {
             <IdentityBadges data={IDENTITY_DATA} />
           </section>
 
-          {/* Daily Quest & Agents - Symmetric Row */}
-          <section className="grid grid-cols-12 gap-12 items-stretch">
-            <div className="col-span-12 lg:col-span-8 h-full">
-               <DailyQuest />
+          {/* Daily Horoscope - Full Width Featured Section */}
+          <section className="space-y-12">
+            <div className="animate-reveal" style={{ animationDelay: '0.2s' }}>
+              <DailyQuest />
             </div>
-            <div className="col-span-12 lg:col-span-4 h-full flex flex-col">
-               <AgentsSection agents={AGENTS} />
+            
+            {/* Agents Section moved below the Horoscope for more space */}
+            <div className="grid grid-cols-12 animate-reveal" style={{ animationDelay: '0.25s' }}>
+              <div className="col-span-12">
+                <AgentsSection agents={AGENTS} />
+              </div>
             </div>
           </section>
 

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Sparkles, Zap, Eye, Heart, Globe, Compass, RefreshCw } from 'lucide-react';
+import { Sparkles, Zap, Eye, Heart, Globe, Compass, RefreshCw, Star } from 'lucide-react';
 
 const SegmentedScale: React.FC<{ label: string; value: number; color: string }> = ({ label, value, color }) => {
   const segments = 15;
@@ -28,143 +28,188 @@ const SegmentedScale: React.FC<{ label: string; value: number; color: string }> 
   );
 };
 
-const PlanetaryOrbits: React.FC = () => {
-  return (
-    <div className="relative w-full aspect-square max-w-[320px] mx-auto flex items-center justify-center">
-      {/* Background Rings */}
-      <div className="absolute inset-0 border border-white/5 rounded-full animate-spin-slow" />
-      <div className="absolute inset-8 border border-white/10 rounded-full" style={{ animationDirection: 'reverse', animationDuration: '120s' }} />
-      <div className="absolute inset-16 border border-white/5 rounded-full animate-spin-slow" style={{ animationDuration: '240s' }} />
-      
-      {/* Central Sun */}
-      <div className="w-4 h-4 bg-[#C9A46A] rounded-full shadow-[0_0_30px_#C9A46A] z-20" />
-      
-      {/* Moving Planets (Symbolic) */}
-      <div className="absolute inset-0 animate-spin-slow" style={{ animationDuration: '45s' }}>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#7AA7A1] rounded-full shadow-[0_0_15px_#7AA7A1]" />
-      </div>
-      <div className="absolute inset-8 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '80s' }}>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#8F7AD1] rounded-full shadow-[0_0_15px_#8F7AD1]" />
-      </div>
-      <div className="absolute inset-20 animate-spin-slow" style={{ animationDuration: '150s' }}>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-[#C9A46A] rounded-full shadow-[0_0_15px_#C9A46A]" />
-      </div>
+interface PlanetProps {
+  name: string;
+  size: number;
+  orbitRadius: number;
+  period: number; 
+  color: string;
+  hasRings?: boolean;
+  baseAngle: number;
+}
 
-      {/* Aspect Lines */}
-      <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 100 100">
-        <line x1="50" y1="5" x2="85" y2="70" stroke="white" strokeWidth="0.2" strokeDasharray="1 2" />
-        <line x1="15" y1="30" x2="85" y2="70" stroke="#7AA7A1" strokeWidth="0.3" />
-        <line x1="50" y1="95" x2="15" y2="30" stroke="#C9A46A" strokeWidth="0.2" />
-      </svg>
+const Planet3D: React.FC<PlanetProps> = ({ name, size, orbitRadius, period, color, hasRings, baseAngle }) => {
+  const [rotation, setRotation] = useState(0);
+
+  useEffect(() => {
+    let frameId: number;
+    const start = Date.now() / 1000;
+    const animate = () => {
+      const now = Date.now() / 1000;
+      const elapsed = now - start;
+      const angle = baseAngle + (elapsed * (360 / period));
+      setRotation(angle);
+      frameId = requestAnimationFrame(animate);
+    };
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [period, baseAngle]);
+
+  const radian = (rotation * Math.PI) / 180;
+  const x = Math.cos(radian) * orbitRadius;
+  const y = Math.sin(radian) * orbitRadius;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
+      {/* Orbit Line */}
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.04]"
+        style={{ width: orbitRadius * 2, height: orbitRadius * 2 }}
+      />
       
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 mono text-[7px] text-white/30 uppercase tracking-widest text-center">
-        Realtime_Celestial_Engine_v4
+      {/* Planet Body */}
+      <div 
+        className="absolute top-1/2 left-1/2"
+        style={{ 
+          transform: `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0px) rotateX(-65deg)`,
+          width: size,
+          height: size
+        }}
+      >
+        <div 
+          className="w-full h-full rounded-full shadow-lg relative group/planet"
+          style={{ 
+            backgroundColor: color,
+            boxShadow: `0 0 15px ${color}88`,
+            border: '1px solid rgba(255,255,255,0.3)'
+          }}
+        >
+          {hasRings && (
+            <div 
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2px] border-white/20"
+              style={{ width: size * 2.2, height: size * 0.6, transform: 'rotateZ(25deg)' }}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SolarSystem3D: React.FC = () => {
+  const planets: PlanetProps[] = [
+    { name: 'MERCURY', size: 3, orbitRadius: 35, period: 10, color: '#A1A1AA', baseAngle: 45 },
+    { name: 'VENUS', size: 5, orbitRadius: 55, period: 22, color: '#EAB308', baseAngle: 120 },
+    { name: 'EARTH', size: 6, orbitRadius: 80, period: 35, color: '#7AA7A1', baseAngle: 0 },
+    { name: 'MARS', size: 4, orbitRadius: 100, period: 65, color: '#C9A46A', baseAngle: 280 },
+    { name: 'JUPITER', size: 10, orbitRadius: 130, period: 160, color: '#D4D4D8', baseAngle: 190 },
+    { name: 'SATURN', size: 9, orbitRadius: 165, period: 300, color: '#FDE68A', hasRings: true, baseAngle: 60 },
+  ];
+
+  return (
+    <div className="relative w-full h-[450px] flex items-center justify-center">
+      <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
+        <div className="relative w-full h-full flex items-center justify-center" style={{ transform: 'rotateX(65deg)', transformStyle: 'preserve-3d' }}>
+          {/* Sun */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#C9A46A] z-20 shadow-[0_0_60px_#C9A46A]">
+            <div className="absolute inset-0 rounded-full animate-pulse bg-white/30 blur-sm" />
+          </div>
+
+          {/* Zodiac Ring Decor */}
+          <div className="absolute w-[500px] h-[500px] border border-white/5 rounded-full" />
+          <div className="absolute w-[510px] h-[510px] border border-white/10 rounded-full border-dashed opacity-30" />
+
+          {planets.map(p => <Planet3D key={p.name} {...p} />)}
+        </div>
       </div>
     </div>
   );
 };
 
 const DailyQuest: React.FC = () => {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
   return (
     <div className="dark-premium-card p-12 h-full flex flex-col relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#8F7AD1]/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-[#7AA7A1]/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#8F7AD1]/5 blur-[150px] rounded-full pointer-events-none" />
       
       <div className="relative z-10 flex flex-col h-full">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-white/10 pb-10">
-          <div className="flex items-center gap-5">
-            <div className="p-4 bg-white/5 rounded-[1.5rem] border border-white/10 shadow-inner">
-              <Globe size={24} className="text-[#7AA7A1]" />
+        {/* Header: Prominent Zodiac Signs */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 border-b border-white/10 pb-10">
+          <div className="flex items-center gap-6">
+            <div className="p-4 bg-white/5 rounded-[1.8rem] border border-white/10">
+              <Star size={28} className="text-[#C9A46A]" />
             </div>
             <div>
               <div className="flex items-center gap-3">
                 <h3 className="text-[12px] uppercase tracking-[0.5em] font-extrabold text-[#7AA7A1]">Tageshoroskop</h3>
-                <span className="w-1 h-1 rounded-full bg-white/20" />
-                <span className="mono text-[9px] text-white/40 uppercase tracking-widest flex items-center gap-2">
-                  <RefreshCw size={10} className="animate-spin" /> Live Sync
+                <span className="mono text-[9px] text-white/30 uppercase flex items-center gap-2">
+                  <RefreshCw size={10} className="animate-spin" /> Live_Transit
                 </span>
               </div>
-              <div className="flex items-center gap-4 mt-2">
-                <div className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2">
-                   <span className="text-[#C9A46A] text-sm">♓</span>
-                   <span className="mono text-[9px] text-white font-bold uppercase tracking-wider">Fische</span>
+              <div className="flex items-center gap-4 mt-3">
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
+                  <span className="text-[#C9A46A] text-xl leading-none">♓</span>
+                  <span className="mono text-[10px] text-white font-bold uppercase tracking-widest">Fische</span>
                 </div>
-                <div className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2">
-                   <span className="text-[#7AA7A1] text-sm">🐎</span>
-                   <span className="mono text-[9px] text-white font-bold uppercase tracking-wider">Metall Pferd</span>
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
+                  <span className="text-[#7AA7A1] text-xl leading-none">🐎</span>
+                  <span className="mono text-[10px] text-white font-bold uppercase tracking-widest">Metall-Pferd</span>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="hidden lg:block">
-            <div className="text-right">
-              <div className="mono text-[9px] text-white/30 uppercase tracking-[0.4em] font-bold">Datum: {new Date().toLocaleDateString('de-DE')}</div>
-              <div className="mono text-[9px] text-white/30 uppercase tracking-[0.4em] font-bold mt-1">Siderische Zeit: 14:23:09</div>
-            </div>
+          <div className="text-right hidden lg:block">
+            <div className="mono text-[10px] text-white/40 uppercase tracking-widest">{new Date().toLocaleDateString('de-DE')}</div>
+            <div className="mono text-[9px] text-[#C9A46A] font-bold uppercase tracking-[0.4em] mt-1">Siderische Zeit: Synchron</div>
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 flex-grow">
-          {/* Left: Planetary Graphic */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-white/[0.02] rounded-[3rem] border border-white/5">
-            <div className="mono text-[9px] text-white/20 uppercase tracking-[0.6em] mb-8 font-extrabold">Konstellation_Alpha</div>
-            <PlanetaryOrbits />
-            <div className="mt-8 flex gap-3">
-              {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#C9A46A]/20" />)}
-            </div>
+        {/* Content: 3D Visualization & Text - Adjusted to 6:6 Spacing */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 flex-grow items-center">
+          <div className="lg:col-span-6 flex flex-col items-center justify-center p-6 bg-white/[0.01] rounded-[3rem] border border-white/5">
+            <SolarSystem3D />
+            <div className="mt-4 mono text-[8px] text-white/20 uppercase tracking-[0.6em] text-center">Celestial_Engine_v2.5</div>
           </div>
 
-          {/* Right: Horoscope Text & Scales */}
-          <div className="lg:col-span-7 flex flex-col">
-            <div className="flex-grow">
+          <div className="lg:col-span-6 flex flex-col justify-center">
+            <div className="mb-10">
               <div className="flex items-center gap-3 mb-6">
-                <Compass size={14} className="text-[#C9A46A]" />
-                <span className="mono text-[10px] text-[#C9A46A] font-extrabold uppercase tracking-[0.4em]">Deine heutige Resonanz</span>
+                <Compass size={14} className="text-[#7AA7A1]" />
+                <span className="mono text-[10px] text-[#7AA7A1] font-extrabold uppercase tracking-[0.4em]">Kosmische Strömung</span>
               </div>
-              
-              <h2 className="serif text-4xl lg:text-5xl font-light mb-8 leading-tight text-white tracking-tight">
-                Die Strömung der Intuition nutzen.
+              <h2 className="serif text-5xl xl:text-6xl font-light mb-8 leading-tight text-white tracking-tight">
+                Intuition als Kompass.
               </h2>
-              
-              <div className="bg-white/[0.03] p-8 rounded-[2rem] border border-white/5 relative group hover:border-[#7AA7A1]/30 transition-all duration-500">
-                <p className="text-white/80 text-lg leading-relaxed font-light italic serif">
-                  "Merkur bildet heute einen harmonischen Aspekt zu deiner Geburts-Sonne. Dies ist der ideale Zeitpunkt, um komplexe Emotionen in klare Worte zu fassen. Vertraue auf die subtilen Impulse deines Unterbewusstseins – sie leiten dich präziser als jeder rationale Plan."
+              <div className="bg-white/[0.04] p-10 rounded-[2.5rem] border border-white/5 relative group transition-all hover:border-[#7AA7A1]/20">
+                <p className="text-white/80 text-xl xl:text-2xl leading-relaxed font-light italic serif">
+                  "Die heutige Mars-Neptun Konjunktion verstärkt deine Empathie. Was sich wie Verwirrung anfühlt, ist in Wahrheit ein geschärfter Sinn für das Nicht-Sichtbare. Nutze die Energie des Metall-Pferdes, um diese Visionen in disziplinierte Taten zu verwandeln."
                 </p>
-                <div className="absolute top-4 right-4 opacity-10 group-hover:opacity-30 transition-opacity">
-                  <Sparkles size={24} className="text-white" />
+                <div className="absolute top-4 right-4 opacity-10">
+                  <Sparkles size={24} className="text-[#C9A46A]" />
                 </div>
               </div>
             </div>
 
-            {/* Scale Bars Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-12 pt-10 border-t border-white/10">
-              <SegmentedScale label="Energie" value={75} color="#C9A46A" />
-              <SegmentedScale label="Intuition" value={92} color="#7AA7A1" />
-              <SegmentedScale label="Gefühle" value={84} color="#8F7AD1" />
+            {/* Strengths Scales */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 pt-10 border-t border-white/10">
+              <SegmentedScale label="Energie" value={68} color="#C9A46A" />
+              <SegmentedScale label="Intuition" value={94} color="#7AA7A1" />
+              <SegmentedScale label="Gefühle" value={82} color="#8F7AD1" />
             </div>
           </div>
         </div>
 
-        {/* Footer Action */}
-        <div className="mt-14 flex flex-col sm:flex-row items-center justify-between gap-8 pt-8 border-t border-white/5 opacity-80 hover:opacity-100 transition-opacity">
-          <div className="flex items-center gap-4">
-             <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+        {/* Footer: Interactive Action */}
+        <div className="mt-12 flex items-center justify-between pt-8 border-t border-white/5">
+           <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
                 <Heart size={16} className="text-[#8F7AD1]" />
-             </div>
-             <div className="mono text-[9px] text-white/40 uppercase tracking-[0.3em] font-bold leading-tight">
-                Fokus des Tages:<br/>Selbstakzeptanz
-             </div>
-          </div>
-          <button className="w-full sm:w-auto px-10 py-4 bg-white/5 hover:bg-white text-white hover:text-[#0E1B33] border border-white/10 transition-all duration-500 rounded-full text-[10px] font-extrabold uppercase tracking-[0.5em] flex items-center justify-center gap-3">
-            <Eye size={14} /> Details ansehen
-          </button>
+              </div>
+              <span className="mono text-[9px] text-white/40 uppercase tracking-widest font-bold">Fokus: Emotionale Integrität</span>
+           </div>
+           <button className="px-10 py-4 bg-white hover:bg-[#C9A46A] text-[#0E1B33] hover:text-white transition-all duration-500 rounded-full text-[10px] font-extrabold uppercase tracking-[0.5em] flex items-center gap-3 shadow-xl">
+              <Eye size={14} /> Tiefenanalyse
+           </button>
         </div>
       </div>
     </div>

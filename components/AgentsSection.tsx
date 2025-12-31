@@ -20,23 +20,23 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents }) => {
         </div>
       </div>
 
-      <div className="space-y-6 flex-grow">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
         {agents.map((agent) => (
-          <div key={agent.id} className="p-6 rounded-3xl bg-[#F6F3EE]/50 border border-[#E6E0D8] flex flex-col gap-6 hover:border-[#8F7AD1] transition-all group">
-            <div className="flex justify-between items-start">
+          <div key={agent.id} className="p-8 rounded-3xl bg-[#F6F3EE]/50 border border-[#E6E0D8] flex flex-col justify-between hover:border-[#8F7AD1] transition-all group">
+            <div className="flex justify-between items-start mb-6">
               <div>
                 <div className="flex items-center gap-3">
-                  <span className="text-md font-bold text-[#0E1B33] tracking-tight">{agent.name}</span>
+                  <span className="text-lg font-bold text-[#0E1B33] tracking-tight">{agent.name}</span>
                   <span className="text-[9px] px-2.5 py-1 rounded-full border border-[#E6E0D8] bg-white text-[#5A6477] font-extrabold uppercase tracking-[0.2em]">
                     {agent.type}
                   </span>
                 </div>
-                <p className="text-[12px] text-[#5A6477] mt-2 font-light leading-relaxed">{agent.description}</p>
+                <p className="text-[13px] text-[#5A6477] mt-3 font-light leading-relaxed">{agent.description}</p>
               </div>
-              {agent.premium && <Sparkles size={16} className="text-[#C9A46A] group-hover:scale-110 transition-transform" />}
+              {agent.premium && <Sparkles size={20} className="text-[#C9A46A] group-hover:scale-110 transition-transform" />}
             </div>
             
-            <button className={`w-full py-3.5 rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all ${
+            <button className={`w-full py-4 rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.3em] transition-all ${
               agent.premium 
                 ? 'bg-[#0E1B33] text-white hover:bg-[#8F7AD1] shadow-xl shadow-[#0E1B33]/10' 
                 : 'bg-white border border-[#E6E0D8] text-[#0E1B33] hover:border-[#8F7AD1]'
