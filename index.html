@@ -11,29 +11,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-paper: #F6F3EE;
-      --navy: #0E1B33;
+      /* Bright Pastel Palette */
+      --bg-paper: #FEFDF9;
+      --navy: #1F2937;
       --card-bg: #FFFFFF;
-      --muted: #5A6477;
-      --stroke: #E6E0D8;
-      --holo-violet: #8F7AD1;
-      --holo-cyan: #7AA7A1;
-      --holo-gold: #C9A46A;
-      --input-bg: #F6F3EE;
+      --muted: #6B7280;
+      --stroke: #F1EFE9;
+      
+      --holo-violet: #DCD4F5;
+      --holo-cyan: #B6EDF2;
+      --holo-gold: #FBE4A1;
+      --holo-yellow: #FFF9C4;
+      
+      --input-bg: #FCFAF5;
       --transition-speed: 0.4s;
+      
+      /* Golden Ratio Spacing */
+      --phi: 1.618;
+      --spacing-unit: 8px;
     }
 
-    /* Dark Mode Variable Overrides */
+    /* Dark Mode Variable Overrides for High Contrast */
     .dark {
-      --bg-paper: #0A0A0C;
-      --navy: #E2E8F0;
-      --card-bg: #111114;
-      --muted: #94A3B8;
-      --stroke: #24242A;
-      --input-bg: #1A1A1E;
+      --bg-paper: #08090B;
+      --navy: #FFFFFF; /* Maximum contrast for headers */
+      --card-bg: #121418;
+      --muted: #D1D5DB; /* Lighter gray for readability */
+      --stroke: #2A2D35;
+      --input-bg: #1A1D23;
+      
       --holo-violet: #A78BFA;
-      --holo-cyan: #94D3CE;
-      --holo-gold: #D9B08C;
+      --holo-cyan: #22D3EE;
+      --holo-gold: #FBBF24;
     }
 
     body {
@@ -48,6 +57,41 @@
     .serif { font-family: 'Cormorant Garamond', serif; }
     .mono { font-family: 'IBM Plex Mono', monospace; }
 
+    /* Watercolor Texture Background */
+    .watercolor-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .watercolor-blob {
+      position: absolute;
+      filter: blur(80px);
+      opacity: 0.4;
+      border-radius: 50%;
+      mix-blend-mode: multiply;
+      animation: float-blob 25s ease-in-out infinite alternate;
+    }
+
+    .dark .watercolor-blob {
+      mix-blend-mode: screen;
+      opacity: 0.12;
+    }
+
+    @keyframes float-blob {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(10%, 8%) scale(1.15); }
+    }
+
+    /* Shimmering Holo Edge Animation */
+    @keyframes holo-shimmer {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     .bg-pattern {
       position: fixed;
       inset: 0;
@@ -55,37 +99,10 @@
       z-index: 0;
       background-image: 
         radial-gradient(circle at 15% 20%, var(--navy) 0.8px, transparent 0.8px),
-        radial-gradient(circle at 85% 15%, var(--navy) 0.6px, transparent 0.6px),
-        radial-gradient(circle at 45% 45%, var(--navy) 1px, transparent 1px),
-        radial-gradient(circle at 20% 75%, var(--navy) 0.7px, transparent 0.7px),
-        radial-gradient(circle at 75% 85%, var(--navy) 0.6px, transparent 0.6px),
-        radial-gradient(circle at 55% 10%, var(--navy) 0.5px, transparent 0.5px),
-        radial-gradient(circle at 30% 65%, var(--navy) 0.9px, transparent 0.9px),
-        radial-gradient(circle at 95% 50%, var(--navy) 0.7px, transparent 0.7px),
-        radial-gradient(circle at 65% 75%, var(--navy) 1.1px, transparent 1.1px),
-        radial-gradient(circle at 35% 95%, var(--navy) 0.6px, transparent 0.6px),
-        linear-gradient(rgba(14, 27, 51, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(14, 27, 51, 0.03) 1px, transparent 1px);
-      background-size: 400px 400px, 400px 400px, 400px 400px, 400px 400px, 400px 400px, 400px 400px, 400px 400px, 400px 400px, 400px 400px, 400px 400px, 100px 100px, 100px 100px;
-      opacity: 0.1;
+        radial-gradient(circle at 85% 15%, var(--navy) 0.6px, transparent 0.6px);
+      background-size: 400px 400px;
+      opacity: 0.08;
       transition: opacity var(--transition-speed);
-    }
-
-    .dark .bg-pattern {
-      opacity: 0.2;
-      background-image: 
-        radial-gradient(circle at 15% 20%, #FFFFFF 0.4px, transparent 0.4px),
-        radial-gradient(circle at 85% 15%, #FFFFFF 0.3px, transparent 0.3px),
-        radial-gradient(circle at 45% 45%, #FFFFFF 0.5px, transparent 0.5px),
-        radial-gradient(circle at 20% 75%, #FFFFFF 0.4px, transparent 0.4px),
-        radial-gradient(circle at 75% 85%, #FFFFFF 0.3px, transparent 0.3px),
-        radial-gradient(circle at 55% 10%, #FFFFFF 0.2px, transparent 0.2px),
-        radial-gradient(circle at 30% 65%, #FFFFFF 0.4px, transparent 0.4px),
-        radial-gradient(circle at 95% 50%, #FFFFFF 0.3px, transparent 0.3px),
-        radial-gradient(circle at 65% 75%, #FFFFFF 0.6px, transparent 0.6px),
-        radial-gradient(circle at 35% 95%, #FFFFFF 0.3px, transparent 0.3px),
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     }
 
     .premium-card {
@@ -94,56 +111,40 @@
       border-radius: 2.5rem;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 15px 45px -15px rgba(0, 0, 0, 0.05);
       transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
     }
     
     .dark .premium-card {
-      box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.4);
     }
 
-    .premium-card::before {
+    .premium-card::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, var(--holo-violet) 25%, var(--holo-cyan) 50%, var(--holo-gold) 75%, transparent 100%);
-      opacity: 0.6;
-      z-index: 10;
-    }
-
-    .dark-premium-card {
-      background: #0E1B33;
+      inset: 0;
+      pointer-events: none;
       border-radius: 2.5rem;
-      position: relative;
-      overflow: hidden;
-      color: #FFFFFF;
-      box-shadow: 0 20px 40px -15px rgba(14, 27, 51, 0.3);
-    }
-    
-    .dark .dark-premium-card {
-      background: #08090D;
-      border: 1px solid #1A1A24;
+      box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.03);
+      z-index: 5;
     }
 
     .cluster-title {
-      font-size: 8rem;
+      font-size: clamp(4rem, 10vw, 8rem);
       line-height: 1;
-      opacity: 0.04;
+      opacity: 0.03;
       pointer-events: none;
       user-select: none;
-      letter-spacing: 0.25em;
+      letter-spacing: 0.35em;
       color: var(--navy);
       font-weight: 300;
       transition: color var(--transition-speed), opacity var(--transition-speed);
     }
 
-    .dark .cluster-title { opacity: 0.08; color: #FFFFFF; }
+    .dark .cluster-title { opacity: 0.05; color: #FFFFFF; }
 
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .animate-spin-slow { animation: rotate 180s linear infinite; }
+    .animate-spin-slow { animation: rotate 240s linear infinite; }
     
     @keyframes revealUp {
       from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
@@ -152,41 +153,27 @@
     .animate-reveal { animation: revealUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
     @keyframes scan-shine {
-      0% { left: -100%; opacity: 0; }
+      0% { left: -150%; opacity: 0; }
       20% { opacity: 0.4; }
       80% { opacity: 0.4; }
-      100% { left: 100%; opacity: 0; }
+      100% { left: 150%; opacity: 0; }
     }
     .scan-shine-effect {
       position: absolute;
       top: 0;
       height: 100%;
-      width: 40%;
-      background: linear-gradient(90deg, transparent, rgba(122, 167, 161, 0.3), rgba(255, 255, 255, 0.1), rgba(122, 167, 161, 0.3), transparent);
-      transform: skewX(-20deg);
+      width: 50%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: skewX(-25deg);
       pointer-events: none;
       z-index: 20;
-      animation: scan-shine 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: scan-shine 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-
-    .segmented-bar {
-      display: flex;
-      gap: 2px;
-      height: 6px;
-      width: 100%;
-    }
-    .segment {
-      flex: 1;
-      height: 100%;
-      background: var(--stroke);
-      border-radius: 1px;
-      transition: background 1s ease-out;
-    }
-    .segment.active { background: var(--navy); }
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg-paper); }
-    ::-webkit-scrollbar-thumb { background: var(--stroke); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 12px; }
+    .dark ::-webkit-scrollbar-thumb { background: #374151; }
   </style>
 <script type="importmap">
 {
@@ -201,6 +188,11 @@
 </script>
 </head>
 <body>
+  <div class="watercolor-canvas">
+    <div class="watercolor-blob" style="width: 70vw; height: 70vw; background: var(--holo-yellow); top: -25%; left: -15%;"></div>
+    <div class="watercolor-blob" style="width: 55vw; height: 55vw; background: var(--holo-cyan); bottom: -15%; right: -10%; animation-delay: -6s;"></div>
+    <div class="watercolor-blob" style="width: 45vw; height: 45vw; background: var(--holo-gold); top: 35%; right: 15%; animation-delay: -12s;"></div>
+  </div>
   <div class="bg-pattern"></div>
   <div id="root"></div>
 </body>
