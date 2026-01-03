@@ -42,47 +42,93 @@ const Planet3D: React.FC<PlanetProps & { currentRotation: number }> = ({ name, s
   const radian = (currentRotation * Math.PI) / 180;
   const x = Math.cos(radian) * orbitRadius;
   const y = Math.sin(radian) * orbitRadius;
+  
+  // Depth calculation for sorting
+  // Since rotateX is 65deg, y-position on screen mostly determines visual depth
+  const zDepth = Math.sin(radian) * (orbitRadius * 0.1); 
+  const depthScale = 0.85 + (Math.sin(radian) + 1) * 0.15;
 
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
-      {/* Orbit Line */}
+      {/* Orbit Line - Fixed to lie flat on the plane */}
       <div 
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.04]"
-        style={{ width: orbitRadius * 2, height: orbitRadius * 2 }}
+        style={{ width: orbitRadius * 2, height: orbitRadius * 2, transform: 'translateZ(-1px)' }}
       />
       
-      {/* Planet Body as Geometric Marker */}
+      {/* Planet Body Container */}
       <div 
         className="absolute top-1/2 left-1/2"
         style={{ 
-          transform: `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0px) rotateX(-65deg)`,
+          transform: `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${zDepth}px) rotateX(-65deg) scale(${depthScale})`,
           width: size,
-          height: size
+          height: size,
+          transformStyle: 'preserve-3d',
+          zIndex: Math.floor(zDepth + 100) // Secondary sorting fallback
         }}
       >
         <div 
           className="w-full h-full relative group/planet flex items-center justify-center"
+          style={{ transformStyle: 'preserve-3d' }}
         >
-          {/* Abstract Geometric Shell */}
-          <div className="absolute inset-0 rotate-45 border border-white/20 scale-150 animate-pulse" />
+          {/* 3D SPHERE LAYERS */}
+          
+          {/* 1. Base Body Color */}
           <div 
-            className="w-full h-full rounded-full shadow-lg relative z-10"
+            className="absolute inset-0 rounded-full transition-transform duration-500 group-hover/planet:scale-110"
             style={{ 
               backgroundColor: color,
-              boxShadow: `0 0 15px ${color}88`,
-              border: '1px solid rgba(255,255,255,0.3)'
+              boxShadow: `0 0 ${size * 2}px ${color}33`
             }}
           />
+
+          {/* 2. Global Illumination & Volume (Radial Gradient) */}
+          <div 
+            className="absolute inset-0 rounded-full z-10"
+            style={{
+              background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 70%), 
+                           radial-gradient(circle at 70% 70%, rgba(0,0,0,0.5) 0%, transparent 80%)`
+            }}
+          />
+
+          {/* 3. "Dark Side" Shadow - Always oriented away from the center (Sun) */}
+          <div 
+            className="absolute inset-[-1px] rounded-full z-[12] pointer-events-none"
+            style={{
+              background: `linear-gradient(${currentRotation + 180}deg, rgba(0,0,0,0.7) 0%, transparent 60%)`
+            }}
+          />
+          
+          {/* 4. Atmospheric Glow / Rim Lighting */}
+          <div 
+            className="absolute inset-[-4px] rounded-full blur-[6px] opacity-30 animate-pulse z-[5]"
+            style={{ backgroundColor: color }}
+          />
+
+          {/* 5. High-Frequency Specular Highlight (The "Glint") */}
+          <div className="absolute top-[15%] left-[15%] w-[25%] h-[25%] bg-white/60 blur-[1px] rounded-full z-[15]" />
+
+          {/* Rings - for Saturn etc */}
           {hasRings && (
             <div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1px] border-white/20"
-              style={{ width: size * 3, height: size * 0.8, transform: 'rotateZ(25deg)' }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-white/20"
+              style={{ 
+                width: size * 4, 
+                height: size * 1.2, 
+                transform: 'rotateZ(15deg) rotateX(10deg)',
+                boxShadow: '0 0 15px rgba(255,255,255,0.05)',
+                background: 'radial-gradient(ellipse at center, transparent 35%, rgba(255,255,255,0.1) 60%, transparent 100%)',
+                zIndex: -1
+              }}
             />
           )}
           
-          {/* Identification Label */}
-          <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 mono text-[5px] text-white/40 tracking-widest whitespace-nowrap opacity-0 group-hover/planet:opacity-100 transition-opacity">
-            {name}_POS_CALC
+          {/* Identification Label - Enhanced visibility */}
+          <div className="absolute top-full mt-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-0 group-hover/planet:opacity-100 transition-all duration-500 translate-y-2 group-hover/planet:translate-y-0">
+            <div className="w-[1px] h-3 bg-white/20" />
+            <div className="mono text-[7px] text-white font-bold tracking-[0.2em] whitespace-nowrap bg-[var(--navy)]/80 backdrop-blur-sm px-2 py-1 rounded border border-white/10 uppercase">
+              {name}
+            </div>
           </div>
         </div>
       </div>
@@ -91,7 +137,6 @@ const Planet3D: React.FC<PlanetProps & { currentRotation: number }> = ({ name, s
 };
 
 const CelestialAspects: React.FC<{ rotations: number[]; planets: PlanetProps[] }> = ({ rotations, planets }) => {
-  // Simple heuristic for "aspects" based on angular difference
   const aspects = useMemo(() => {
     const list: any[] = [];
     for (let i = 0; i < rotations.length; i++) {
@@ -99,17 +144,16 @@ const CelestialAspects: React.FC<{ rotations: number[]; planets: PlanetProps[] }
         const diff = Math.abs(rotations[i] - rotations[j]) % 360;
         const normalizedDiff = diff > 180 ? 360 - diff : diff;
 
-        // Trine (120), Square (90), Conjunction (0)
-        if (normalizedDiff < 15) list.push({ p1: i, p2: j, type: 'Conjunction', color: '#7AA7A1' });
-        else if (Math.abs(normalizedDiff - 90) < 10) list.push({ p1: i, p2: j, type: 'Square', color: '#8F7AD1' });
-        else if (Math.abs(normalizedDiff - 120) < 10) list.push({ p1: i, p2: j, type: 'Trine', color: '#C9A46A' });
+        if (normalizedDiff < 12) list.push({ p1: i, p2: j, type: 'Conjunction', color: '#7AA7A1' });
+        else if (Math.abs(normalizedDiff - 90) < 8) list.push({ p1: i, p2: j, type: 'Square', color: '#8F7AD1' });
+        else if (Math.abs(normalizedDiff - 120) < 8) list.push({ p1: i, p2: j, type: 'Trine', color: '#C9A46A' });
       }
     }
     return list;
   }, [rotations]);
 
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30 overflow-visible" viewBox="-250 -250 500 500">
+    <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40 overflow-visible z-0" viewBox="-250 -250 500 500" style={{ transform: 'translateZ(-2px)' }}>
       {aspects.map((aspect, idx) => {
         const rad1 = (rotations[aspect.p1] * Math.PI) / 180;
         const rad2 = (rotations[aspect.p2] * Math.PI) / 180;
@@ -126,12 +170,12 @@ const CelestialAspects: React.FC<{ rotations: number[]; planets: PlanetProps[] }
             <line 
               x1={x1} y1={y1} x2={x2} y2={y2} 
               stroke={aspect.color} 
-              strokeWidth="0.5" 
-              strokeDasharray="2 4"
+              strokeWidth="1" 
+              strokeDasharray="4 4"
               className="animate-pulse"
             />
-            <circle cx={x1} cy={y1} r="2" fill={aspect.color} />
-            <circle cx={x2} cy={y2} r="2" fill={aspect.color} />
+            <circle cx={x1} cy={y1} r="3" fill={aspect.color} className="shadow-lg" />
+            <circle cx={x2} cy={y2} r="3" fill={aspect.color} className="shadow-lg" />
           </g>
         );
       })}
@@ -141,12 +185,12 @@ const CelestialAspects: React.FC<{ rotations: number[]; planets: PlanetProps[] }
 
 const SolarSystem3D: React.FC = () => {
   const planets: PlanetProps[] = [
-    { name: 'MERCURY', size: 3, orbitRadius: 35, period: 15, color: '#A1A1AA', baseAngle: 45 },
-    { name: 'VENUS', size: 5, orbitRadius: 55, period: 32, color: '#EAB308', baseAngle: 120 },
-    { name: 'EARTH', size: 6, orbitRadius: 80, period: 45, color: '#7AA7A1', baseAngle: 0 },
-    { name: 'MARS', size: 4, orbitRadius: 100, period: 75, color: '#C9A46A', baseAngle: 280 },
-    { name: 'JUPITER', size: 10, orbitRadius: 130, period: 180, color: '#D4D4D8', baseAngle: 190 },
-    { name: 'SATURN', size: 9, orbitRadius: 165, period: 320, color: '#FDE68A', hasRings: true, baseAngle: 60 },
+    { name: 'MERCURY', size: 5, orbitRadius: 50, period: 10, color: '#A1A1AA', baseAngle: 45 },
+    { name: 'VENUS', size: 8, orbitRadius: 75, period: 24, color: '#EAB308', baseAngle: 120 },
+    { name: 'EARTH', size: 9, orbitRadius: 105, period: 36, color: '#7AA7A1', baseAngle: 0 },
+    { name: 'MARS', size: 7, orbitRadius: 135, period: 58, color: '#C9A46A', baseAngle: 280 },
+    { name: 'JUPITER', size: 16, orbitRadius: 175, period: 140, color: '#D4D4D8', baseAngle: 190 },
+    { name: 'SATURN', size: 13, orbitRadius: 220, period: 280, color: '#FDE68A', hasRings: true, baseAngle: 60 },
   ];
 
   const [rotations, setRotations] = useState<number[]>(planets.map(p => p.baseAngle));
@@ -166,24 +210,34 @@ const SolarSystem3D: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[450px] flex items-center justify-center">
+    <div className="relative w-full h-[500px] flex items-center justify-center">
       <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
         <div className="relative w-full h-full flex items-center justify-center" style={{ transform: 'rotateX(65deg)', transformStyle: 'preserve-3d' }}>
           
-          {/* Celestial Aspects Visualization Overlay */}
+          {/* Aspects Layer */}
           <CelestialAspects rotations={rotations} planets={planets} />
 
-          {/* Sun - core geometric center */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#C9A46A] z-20 shadow-[0_0_60px_#C9A46A] flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full animate-pulse bg-white/30 blur-sm" />
-            <div className="w-16 h-16 border border-[#C9A46A]/20 rounded-full animate-spin-slow" />
-            <div className="w-12 h-12 border border-[#C9A46A]/40 rounded-full" style={{ animation: 'rotate 10s linear infinite reverse' }} />
+          {/* Sun - Volumetric Star Core */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-18 h-18 z-20" style={{ transform: 'rotateX(-65deg)', transformStyle: 'preserve-3d' }}>
+            {/* Outermost Atmospheric Glow */}
+            <div className="absolute inset-[-40px] rounded-full bg-[#C9A46A]/20 blur-[50px] animate-pulse" />
+            
+            {/* Volumetric Spherical Shading for Sun */}
+            <div className="absolute inset-0 rounded-full bg-[#C9A46A] shadow-[0_0_100px_#C9A46A,inset_0_0_30px_white] flex items-center justify-center overflow-hidden">
+              {/* Dynamic Internal Plasma Texture effect */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#C9A46A] via-white/40 to-[#C9A46A] opacity-40 mix-blend-overlay" />
+              <div className="absolute inset-[-10px] border-[1px] border-white/20 rounded-full animate-spin-slow opacity-20" />
+              <div className="absolute inset-[-20px] border-[1px] border-white/5 rounded-full" style={{ animation: 'rotate 20s linear infinite reverse' }} />
+              
+              {/* Central Heat Glare */}
+              <div className="w-6 h-6 rounded-full bg-white/95 blur-[4px] shadow-[0_0_20px_white]" />
+            </div>
           </div>
 
-          {/* Zodiac Calibration Rings */}
-          <div className="absolute w-[500px] h-[500px] border border-white/5 rounded-full" />
-          <div className="absolute w-[480px] h-[480px] border border-white/5 rounded-full flex items-center justify-center">
-             <div className="w-full h-full border border-dashed border-white/10 opacity-20 animate-spin-slow" />
+          {/* Background Grid / Calibration */}
+          <div className="absolute w-[600px] h-[600px] border border-white/[0.02] rounded-full pointer-events-none" />
+          <div className="absolute w-[580px] h-[580px] border border-white/[0.04] rounded-full flex items-center justify-center pointer-events-none">
+             <div className="w-full h-full border border-dashed border-white/[0.06] opacity-20 animate-spin-slow" />
           </div>
 
           {planets.map((p, i) => (
@@ -198,10 +252,10 @@ const SolarSystem3D: React.FC = () => {
 const DailyQuest: React.FC = () => {
   return (
     <div className="dark-premium-card p-12 h-full flex flex-col relative overflow-hidden group/daily">
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#8F7AD1]/5 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#8F7AD1]/10 blur-[180px] rounded-full pointer-events-none" />
       
       <div className="relative z-10 flex flex-col h-full">
-        {/* Header: Enhanced with Geometric Icons */}
+        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 border-b border-white/10 pb-10">
           <div className="flex items-center gap-6">
             <div className="relative">
@@ -239,14 +293,14 @@ const DailyQuest: React.FC = () => {
           </div>
         </div>
 
-        {/* Content: 3D Visualization & Text */}
+        {/* Content */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 flex-grow items-center">
-          <div className="lg:col-span-6 flex flex-col items-center justify-center p-6 bg-white/[0.01] rounded-[3rem] border border-white/5 relative group/viz overflow-hidden">
-            {/* Background Data Stream Visual */}
+          <div className="lg:col-span-7 flex flex-col items-center justify-center p-6 bg-white/[0.01] rounded-[3rem] border border-white/5 relative group/viz overflow-hidden min-h-[500px]">
+            {/* Background Stream Visual */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none overflow-hidden mono text-[8px] text-white p-4 leading-relaxed">
-              {Array.from({ length: 10 }).map((_, i) => (
+              {Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="whitespace-nowrap mb-1">
-                  CALC_ORBIT_{i}: {Math.random().toFixed(8)} | VECTOR_ALPHA_{i}: {Math.random().toFixed(4)} | SYNC_STABLE
+                  CALC_ORBIT_{i}: {Math.random().toFixed(8)} | VECTOR_ALPHA_{i}: {Math.random().toFixed(4)} | DEEP_VOLUME_SYNC
                 </div>
               ))}
             </div>
@@ -268,10 +322,10 @@ const DailyQuest: React.FC = () => {
               </div>
             </div>
             
-            <div className="mt-8 mono text-[8px] text-white/20 uppercase tracking-[0.6em] text-center z-10">Geometric_Alignment_Matrix_v4.0</div>
+            <div className="mt-8 mono text-[8px] text-white/20 uppercase tracking-[0.6em] text-center z-10">Volumetric_Alignment_Core_v4.2</div>
           </div>
 
-          <div className="lg:col-span-6 flex flex-col justify-center relative">
+          <div className="lg:col-span-5 flex flex-col justify-center relative">
             <div className="mb-10">
               <div className="flex items-center gap-3 mb-6">
                 <Layers size={14} className="text-[#7AA7A1]" />
@@ -287,13 +341,11 @@ const DailyQuest: React.FC = () => {
                 <div className="absolute top-4 right-4 opacity-10">
                   <Sparkles size={24} className="text-[#C9A46A]" />
                 </div>
-                {/* Decoration corners */}
                 <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/20 rounded-tl-xl" />
                 <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/20 rounded-br-xl" />
               </div>
             </div>
 
-            {/* Strengths Scales */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 pt-10 border-t border-white/10">
               <SegmentedScale label="Energie" value={68} color="#C9A46A" />
               <SegmentedScale label="Intuition" value={94} color="#7AA7A1" />
@@ -302,7 +354,7 @@ const DailyQuest: React.FC = () => {
           </div>
         </div>
 
-        {/* Footer: Interactive Action */}
+        {/* Footer */}
         <div className="mt-12 flex items-center justify-between pt-8 border-t border-white/5">
            <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 hover:border-[#8F7AD1]/50 transition-colors">

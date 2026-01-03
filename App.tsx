@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import IdentityBadges from './components/IdentityBadges';
 import DailyQuest from './components/DailyQuest';
@@ -12,40 +12,53 @@ import { CORE_STATS, IDENTITY_DATA, QUIZZES, AGENTS } from './constants';
 import { Search, Activity } from 'lucide-react';
 
 const App: React.FC = () => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
   const user = {
     name: 'JULIAN S.',
     level: 14,
     status: 'MISSION_SEEKER',
   };
 
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+
   const handleCalculate = (data: any) => {
     console.log("Calculating for:", data);
   };
 
   return (
-    <div className="min-h-screen">
-      <Sidebar user={user} />
+    <div className="min-h-screen transition-colors duration-500">
+      <Sidebar user={user} theme={theme} onToggleTheme={toggleTheme} />
       
-      <main className="pl-[260px] min-h-screen relative z-10">
+      <main className="pl-[260px] min-h-screen relative z-10 transition-colors duration-500">
         {/* Topbar / Editorial Header */}
-        <header className="h-28 px-16 flex items-center justify-between border-b border-[#E6E0D8] bg-white/60 backdrop-blur-xl sticky top-0 z-50">
+        <header className="h-28 px-16 flex items-center justify-between border-b border-[var(--stroke)] bg-[var(--card-bg)]/60 backdrop-blur-xl sticky top-0 z-50 transition-colors duration-500">
           <div>
-             <h2 className="serif text-4xl font-light text-[#0E1B33] tracking-tight">Dein Character Sheet</h2>
+             <h2 className="serif text-4xl font-light text-[var(--navy)] tracking-tight">Dein Character Sheet</h2>
              <div className="flex items-center gap-3 mt-1.5">
-                <span className="mono text-[10px] text-[#5A6477] font-bold tracking-[0.3em] uppercase opacity-60">KI-generiert • Keine Vorhersage</span>
+                <span className="mono text-[10px] text-[var(--muted)] font-bold tracking-[0.3em] uppercase opacity-60">KI-generiert • Keine Vorhersage</span>
              </div>
           </div>
           
           <div className="flex items-center gap-12">
             <div className="relative group hidden lg:block">
-               <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-[#A1A1AA]" size={16} />
+               <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={16} />
                <input 
                  type="text" 
                  placeholder="Matrix durchsuchen..."
-                 className="pl-14 pr-8 py-3.5 bg-[#F6F3EE] border border-[#E6E0D8] rounded-full text-xs font-medium focus:outline-none focus:border-[#C9A46A] w-72 transition-all"
+                 className="pl-14 pr-8 py-3.5 bg-[var(--input-bg)] border border-[var(--stroke)] rounded-full text-xs font-medium focus:outline-none focus:border-[var(--holo-gold)] w-72 transition-all text-[var(--navy)]"
                />
             </div>
-            <button className="px-12 py-4 bg-[#0E1B33] text-white text-[11px] font-extrabold uppercase tracking-[0.4em] rounded-full hover:bg-[#8F7AD1] transition-all shadow-xl shadow-[#0E1B33]/10">
+            <button className="px-12 py-4 bg-[var(--navy)] text-[var(--card-bg)] text-[11px] font-extrabold uppercase tracking-[0.4em] rounded-full hover:bg-[var(--holo-violet)] transition-all shadow-xl shadow-black/10">
               UPGRADE
             </button>
           </div>
@@ -64,15 +77,14 @@ const App: React.FC = () => {
              <div className="text-center relative">
                 <div className="cluster-title absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">ORACLE</div>
                 <div className="relative z-10">
-                  <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[#7AA7A1] mb-5">Daily_Transit</div>
-                  <h2 className="serif text-7xl font-light text-[#0E1B33] tracking-tighter">Heutige Resonanz</h2>
+                  <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[var(--holo-cyan)] mb-5">Daily_Transit</div>
+                  <h2 className="serif text-7xl font-light text-[var(--navy)] tracking-tighter">Heutige Resonanz</h2>
                 </div>
              </div>
              
              <div className="space-y-12">
                <DailyQuest />
                
-               {/* Agents Section directly integrated into the Oracle flow */}
                <div className="grid grid-cols-12">
                  <div className="col-span-12">
                    <AgentsSection agents={AGENTS} />
@@ -86,8 +98,8 @@ const App: React.FC = () => {
             <div className="text-center relative">
                <div className="cluster-title absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">STATS</div>
                <div className="relative z-10">
-                 <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[#C9A46A] mb-5">System-Status</div>
-                 <h2 className="serif text-7xl font-light text-[#0E1B33] tracking-tighter">Entfaltungs-Matrix</h2>
+                 <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[var(--holo-gold)] mb-5">System-Status</div>
+                 <h2 className="serif text-7xl font-light text-[var(--navy)] tracking-tighter">Entfaltungs-Matrix</h2>
                </div>
             </div>
             <StatsCard stats={CORE_STATS} />
@@ -98,8 +110,8 @@ const App: React.FC = () => {
              <div className="text-center relative">
                 <div className="cluster-title absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">LOOT</div>
                 <div className="relative z-10">
-                  <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[#7AA7A1] mb-5">Inventory</div>
-                  <h2 className="serif text-7xl font-light text-[#0E1B33] tracking-tighter">Mission & Belohnung</h2>
+                  <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[var(--holo-cyan)] mb-5">Inventory</div>
+                  <h2 className="serif text-7xl font-light text-[var(--navy)] tracking-tighter">Mission & Belohnung</h2>
                 </div>
              </div>
              <div className="grid grid-cols-12 gap-12 items-stretch">
@@ -117,8 +129,8 @@ const App: React.FC = () => {
             <div className="text-center mb-24 relative">
                <div className="cluster-title absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">INPUT</div>
                <div className="relative z-10">
-                 <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[#8F7AD1] mb-5">Calibration</div>
-                 <h2 className="serif text-7xl font-light text-[#0E1B33] tracking-tighter">Matrix Rekonfiguration</h2>
+                 <div className="text-[11px] uppercase tracking-[0.8em] font-extrabold text-[var(--holo-violet)] mb-5">Calibration</div>
+                 <h2 className="serif text-7xl font-light text-[var(--navy)] tracking-tighter">Matrix Rekonfiguration</h2>
                </div>
             </div>
             <HoroscopeInput onCalculate={handleCalculate} />
@@ -126,23 +138,23 @@ const App: React.FC = () => {
 
           {/* Event Log Pill */}
           <div className="flex justify-center pt-12">
-             <div className="px-8 py-4 bg-white border border-[#E6E0D8] rounded-full shadow-sm flex items-center gap-5 mono text-[10px] text-[#5A6477] font-bold uppercase tracking-[0.4em]">
-                <Activity size={14} className="text-[#7AA7A1] animate-pulse" />
+             <div className="px-8 py-4 bg-[var(--card-bg)] border border-[var(--stroke)] rounded-full shadow-sm flex items-center gap-5 mono text-[10px] text-[var(--muted)] font-bold uppercase tracking-[0.4em]">
+                <Activity size={14} className="text-[var(--holo-cyan)] animate-pulse" />
                 event: cluster_completed ... +tile ... ts: {Date.now()}
              </div>
           </div>
         </div>
 
         {/* Premium Footer */}
-        <footer className="p-20 mt-40 border-t border-[#E6E0D8] bg-white relative overflow-hidden">
+        <footer className="p-20 mt-40 border-t border-[var(--stroke)] bg-[var(--card-bg)] relative overflow-hidden transition-colors duration-500">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 relative z-10">
             <div className="flex items-center gap-5">
-              <div className="w-4 h-4 rounded-full bg-[#7AA7A1] shadow-[0_0_15px_#7AA7A1]" />
-              <span className="mono text-[11px] text-[#0E1B33] font-extrabold uppercase tracking-[0.5em]">
+              <div className="w-4 h-4 rounded-full bg-[var(--holo-cyan)] shadow-[0_0_15px_var(--holo-cyan)]" />
+              <span className="mono text-[11px] text-[var(--navy)] font-extrabold uppercase tracking-[0.5em]">
                 ASTRO • CHARACTER • V10.4
               </span>
             </div>
-            <div className="text-[10px] mono uppercase tracking-[0.4em] text-[#A1A1AA] font-medium text-center md:text-right">
+            <div className="text-[10px] mono uppercase tracking-[0.4em] text-[var(--muted)] font-medium text-center md:text-right">
               Berechnet ≠ Deutung • Nur Reflexion/Unterhaltung
             </div>
           </div>

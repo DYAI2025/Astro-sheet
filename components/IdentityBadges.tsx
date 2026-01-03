@@ -1,15 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { MasterIdentity } from '../types';
 import { 
   Sparkles, Zap, Star, CircleDot, Cpu, Layers, Hexagon, Database, 
-  Info, ChevronRight, ShieldCheck, Trees, Flame, 
-  Mountain, Waves, Shield, TrendingUp, Anchor, Compass,
-  Orbit, Sun, Moon, ArrowUpRight, Activity, Wand2, Loader2,
-  Binary
+  Trees, Flame, Mountain, Waves, Shield, 
+  Orbit, Sun, Moon, Wand2, Loader2, Target
 } from 'lucide-react';
 import SigilPortrait from './SigilPortrait';
-import { ZODIAC_DATA } from '../constants';
+import { ZODIAC_DATA, ZodiacInfo } from '../constants';
 import { GoogleGenAI } from "@google/genai";
 
 interface IdentityBadgesProps {
@@ -41,7 +39,7 @@ const ElementBadge: React.FC<{ name: string }> = ({ name }) => {
   const Icon = getElementIcon(name);
   return (
     <span className="inline-flex items-center gap-2">
-      {Icon && <Icon size={12} className="text-[#C9A46A]" />}
+      {Icon && <Icon size={12} className="text-[var(--holo-gold)]" />}
       <span>{name}</span>
     </span>
   );
@@ -92,38 +90,45 @@ const ZodiacBadge: React.FC<{ sign: string; prefix?: string }> = ({ sign, prefix
       onMouseLeave={() => setShowTooltip(false)}
       onClick={() => setShowTooltip(!showTooltip)}
     >
-      <div className="w-9 h-9 rounded-full bg-[#0E1B33] flex items-center justify-center text-[#C9A46A] text-xl shadow-lg border border-[#C9A46A]/30 group-hover/zodiac:scale-110 group-hover/zodiac:border-[#C9A46A] group-hover/zodiac:shadow-[#C9A46A]/20 transition-all duration-300 select-none">
+      <div className="w-10 h-10 rounded-full bg-[var(--navy)] flex items-center justify-center text-[var(--holo-gold)] text-xl shadow-lg border border-[var(--holo-gold)]/30 group-hover/zodiac:scale-110 group-hover/zodiac:border-[var(--holo-gold)] group-hover/zodiac:shadow-[var(--holo-gold)]/20 transition-all duration-300 select-none">
         {getZodiacSymbol(sign)}
       </div>
       <div className="flex flex-col items-start leading-none">
         <span className="opacity-40 font-bold mono text-[8px] uppercase tracking-widest mb-0.5">{prefix}</span>
-        <span className="text-[#0E1B33] font-bold text-xs uppercase tracking-tight">{sign}</span>
+        <span className="text-[var(--navy)] font-bold text-xs uppercase tracking-tight">{sign}</span>
       </div>
       
       {showTooltip && info && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-56 bg-[#0E1B33] text-white p-5 rounded-[2rem] shadow-2xl z-[100] animate-reveal pointer-events-none border border-white/10">
-          <div className="flex items-center gap-3 mb-3 border-b border-white/10 pb-3">
-            <span className="text-[#C9A46A] text-2xl">{getZodiacSymbol(sign)}</span>
-            <span className="mono text-[11px] font-bold uppercase tracking-[0.2em]">{sign}</span>
-          </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="mono text-[8px] uppercase text-white/40 tracking-wider">Herrscher</span>
-              <span className="text-[11px] font-bold text-[#7AA7A1]">{info.ruler}</span>
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-5 w-60 bg-[var(--navy)]/95 backdrop-blur-xl text-[var(--card-bg)] p-6 rounded-[2.5rem] shadow-2xl z-[100] animate-reveal border border-white/10 ring-1 ring-white/5">
+          <div className="flex items-center gap-4 mb-4 border-b border-white/10 pb-4">
+            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-[var(--holo-gold)] text-3xl">
+              {getZodiacSymbol(sign)}
             </div>
-            <div className="flex justify-between items-center">
-              <span className="mono text-[8px] uppercase text-white/40 tracking-wider">Element</span>
-              <span className="text-[11px] font-bold text-[#C9A46A]">{info.element}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="mono text-[8px] uppercase text-white/40 tracking-wider">Modalität</span>
-              <span className="text-[11px] font-bold text-[#8F7AD1]">{info.modality}</span>
-            </div>
-            <div className="pt-2 border-t border-white/5">
-               <p className="text-[9px] text-white/60 italic leading-relaxed">{info.keywords}</p>
+            <div className="flex flex-col">
+              <span className="mono text-[12px] font-bold uppercase tracking-[0.2em]">{sign}</span>
+              <span className="mono text-[8px] text-white/40 uppercase tracking-widest mt-0.5">Westliche Matrix</span>
             </div>
           </div>
-          <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0E1B33] rotate-45 border-r border-b border-white/10 -mt-1.5" />
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="mono text-[8px] uppercase opacity-40 tracking-wider">Herrscher</span>
+              <span className="text-[12px] font-bold text-[var(--holo-cyan)]">{info.ruler}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="mono text-[8px] uppercase opacity-40 tracking-wider">Element</span>
+              <span className="text-[12px] font-bold text-[var(--holo-gold)]">{info.element}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="mono text-[8px] uppercase opacity-40 tracking-wider">Modalität</span>
+              <span className="text-[12px] font-bold text-[var(--holo-violet)]">{info.modality}</span>
+            </div>
+            <div className="pt-3 border-t border-white/5">
+              <p className="text-[10px] text-white/60 italic leading-relaxed font-light">
+                {info.keywords}
+              </p>
+            </div>
+          </div>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-4 h-4 bg-[var(--navy)]/95 backdrop-blur-xl rotate-45 border-r border-b border-white/10 -mt-2" />
         </div>
       )}
     </div>
@@ -131,120 +136,237 @@ const ZodiacBadge: React.FC<{ sign: string; prefix?: string }> = ({ sign, prefix
 };
 
 const DataRow: React.FC<{ label: string; value: React.ReactNode; icon: any; isBazi?: boolean }> = ({ label, value, icon: Icon, isBazi }) => (
-  <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between py-6 border-b border-[#E6E0D8]/60 last:border-0 hover:bg-[#0E1B33]/[0.02] px-2 transition-all duration-300 group relative ${isBazi ? 'pl-8' : ''}`}>
+  <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between py-6 border-b border-[var(--stroke)] last:border-0 px-4 transition-all duration-500 group relative rounded-2xl overflow-hidden ${isBazi ? 'ml-6 pl-8 bg-[var(--holo-cyan)]/[0.03] border-l-0 hover:bg-[var(--holo-cyan)]/[0.06] shadow-[inset_0_0_20px_rgba(122,167,161,0.05)]' : 'hover:bg-[var(--navy)]/[0.02]'}`}>
     {isBazi && (
-      <div className="absolute left-0 top-3 bottom-3 w-[4px] rounded-full bg-gradient-to-b from-[#8F7AD1] via-[#7AA7A1] to-[#C9A46A] opacity-80 shadow-[0_0_12px_rgba(122,167,161,0.4)] animate-pulse" />
+      <>
+        <div className="absolute left-0 top-2 bottom-2 w-[4px] rounded-full bg-gradient-to-b from-[var(--holo-violet)] via-[var(--holo-cyan)] to-[var(--holo-gold)] opacity-90 shadow-[0_0_15px_var(--holo-cyan)] group-hover:shadow-[0_0_25px_var(--holo-cyan)] transition-shadow duration-500 animate-pulse" />
+        <div className="absolute -right-20 -top-20 w-40 h-40 bg-[var(--holo-cyan)]/5 blur-[50px] rounded-full group-hover:bg-[var(--holo-cyan)]/10 transition-colors" />
+      </>
     )}
-    <div className="flex items-center gap-4 mb-2 sm:mb-0">
-      <div className={`p-2 bg-white rounded-lg border border-[#E6E0D8] group-hover:border-[#C9A46A] transition-colors shadow-sm ${isBazi ? 'bg-gradient-to-br from-white to-[#F6F3EE] border-[#7AA7A1]/40' : ''}`}>
-        <Icon size={14} className={`text-[#5A6477] group-hover:text-[#0E1B33] ${isBazi ? 'text-[#7AA7A1]' : ''}`} />
+    
+    <div className="flex items-center gap-4 mb-2 sm:mb-0 relative z-10">
+      <div className={`p-2.5 bg-[var(--card-bg)] rounded-xl border transition-all duration-300 shadow-sm ${isBazi ? 'border-[var(--holo-cyan)]/30 group-hover:border-[var(--holo-cyan)] group-hover:scale-110' : 'border-[var(--stroke)] group-hover:border-[var(--holo-gold)]'}`}>
+        <Icon size={14} className={`transition-colors ${isBazi ? 'text-[var(--holo-cyan)]' : 'text-[var(--muted)] group-hover:text-[var(--navy)]'}`} />
       </div>
       <div className="flex flex-col">
-        <span className="mono text-[10px] text-[#5A6477] font-bold uppercase tracking-[0.4em]">{label}</span>
+        <span className={`mono text-[10px] font-bold uppercase tracking-[0.4em] transition-colors ${isBazi ? 'text-[var(--holo-cyan)]' : 'text-[var(--muted)]'}`}>{label}</span>
         {isBazi && (
           <span className="flex items-center gap-1.5 mt-0.5">
-            <span className="w-1 h-1 rounded-full bg-[#7AA7A1] animate-ping" />
-            <span className="mono text-[7px] text-[#7AA7A1] uppercase tracking-[0.2em] font-extrabold">BAZI_QUANTUM_FEED</span>
+            <span className="w-1 h-1 rounded-full bg-[var(--holo-cyan)] animate-ping" />
+            <span className="mono text-[7px] text-[var(--holo-cyan)]/60 uppercase tracking-[0.2em] font-extrabold">QUANTUM_DECODED</span>
           </span>
         )}
       </div>
     </div>
-    <div className={`text-sm text-[#0E1B33] font-bold tracking-tight text-right sm:max-w-[70%] transition-all relative overflow-hidden ${isBazi ? 'bg-[#F6F3EE] px-7 py-3 rounded-full border border-transparent shadow-[0_4px_15px_rgba(122,167,161,0.08)] group-hover:shadow-[0_4px_25px_rgba(122,167,161,0.2)] group-hover:border-[#7AA7A1]/30 flex items-center gap-3' : ''}`}>
-      {isBazi && (
-        <>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#8F7AD1]/10 via-transparent to-[#C9A46A]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-          <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#7AA7A1]/40 to-transparent" />
-          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#C9A46A]/40 to-transparent" />
-          {/* Holo Edge Shimmer */}
-          <div className="absolute top-0 left-[-100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] animate-[scan-shine_3s_infinite]" />
-          <div className="w-1.5 h-1.5 rounded-full bg-[#7AA7A1] shadow-[0_0_8px_#7AA7A1] animate-pulse" />
-        </>
-      )}
+    
+    <div className={`text-sm text-[var(--navy)] font-bold tracking-tight text-right sm:max-w-[70%] transition-all relative z-10 ${isBazi ? 'bg-white/40 dark:bg-black/40 backdrop-blur-md px-8 py-3.5 rounded-2xl border border-[var(--holo-cyan)]/10 shadow-[0_4px_15px_rgba(122,167,161,0.08)] group-hover:border-[var(--holo-cyan)]/40 group-hover:shadow-[0_8px_25px_rgba(122,167,161,0.15)] flex items-center gap-3' : ''}`}>
+      {isBazi && <Cpu size={12} className="text-[var(--holo-cyan)]/50 animate-spin-slow" />}
       <span className="relative z-10">{value}</span>
     </div>
   </div>
 );
 
 const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellation }) => {
+  const [ticks, setTicks] = useState(0);
+  const requestRef = useRef<number>(0);
+  
+  const animate = (time: number) => {
+    setTicks(time);
+    requestRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current!);
+  }, []);
+
+  const getBodyPos = (baseAngle: number, radius: number, speedMult: number) => {
+    const angle = (baseAngle + (ticks * 0.005 * speedMult)) % 360;
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: 200 + Math.cos(rad) * radius,
+      y: 100 + Math.sin(rad) * radius,
+      angle
+    };
+  };
+
+  const sun = getBodyPos(45, 65, 1);
+  const moon = getBodyPos(180, 80, 1.4);
+  const asc = getBodyPos(300, 50, 0.8);
+
+  const checkAspect = (a1: number, a2: number) => {
+    const diff = Math.abs(a1 - a2) % 180;
+    const normDiff = diff > 90 ? 180 - diff : diff;
+    if (normDiff < 5) return { type: 'Conjunction', color: 'var(--holo-gold)' };
+    if (Math.abs(normDiff - 90) < 5) return { type: 'Square', color: 'var(--holo-violet)' };
+    return null;
+  };
+
+  const sunMoonAspect = checkAspect(sun.angle, moon.angle);
+  const moonAscAspect = checkAspect(moon.angle, asc.angle);
+
+  // Fix: Initializing sunInfo, moonInfo, and ascInfo with a default ZodiacInfo object to prevent property access errors on an empty object type.
+  const emptyZodiac: ZodiacInfo = { ruler: '', element: '', modality: '', keywords: '' };
+  const sunInfo = ZODIAC_DATA[signMap[konstellation.sun.toLowerCase()]] || emptyZodiac;
+  const moonInfo = ZODIAC_DATA[signMap[konstellation.moon.toLowerCase()]] || emptyZodiac;
+  const ascInfo = ZODIAC_DATA[signMap[konstellation.rising.toLowerCase()]] || emptyZodiac;
+
   return (
-    <div className="relative w-full aspect-video bg-[#0E1B33] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl mt-12 group/align cursor-crosshair">
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-        <svg width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <pattern id="metatron" width="200" height="200" patternUnits="userSpaceOnUse">
-              <circle cx="100" cy="100" r="80" fill="none" stroke="white" strokeWidth="1" />
-              <path d="M100 20 L169.28 60 L169.28 140 L100 180 L30.72 140 L30.72 60 Z" fill="none" stroke="white" strokeWidth="0.5" />
-              <path d="M100 20 L30.72 140 M169.28 60 L30.72 60 M169.28 140 L100 20 M100 180 L169.28 60 M30.72 140 L169.28 140 M30.72 60 L100 180" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#metatron)" />
+    <div className="relative w-full aspect-video bg-[#0E1B33] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl mt-12 group/align cursor-crosshair" style={{ perspective: '800px' }}>
+      {/* Deep Space Atmosphere Layer */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(122,167,161,0.1),transparent_70%)] opacity-50" />
+      
+      {/* Background Orbital Plane Grid */}
+      <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
+        <svg width="100%" height="100%" viewBox="0 0 400 200" style={{ transform: 'rotateX(35deg)' }}>
+           {Array.from({ length: 24 }).map((_, i) => (
+             <line 
+               key={i} 
+               x1="200" y1="100" 
+               x2={200 + Math.cos((i * 15 * Math.PI) / 180) * 400} 
+               y2={100 + Math.sin((i * 15 * Math.PI) / 180) * 400} 
+               stroke="white" strokeWidth="0.3" strokeDasharray="2 12" 
+             />
+           ))}
+           <circle cx="200" cy="100" r="50" fill="none" stroke="white" strokeWidth="0.15" />
+           <circle cx="200" cy="100" r="80" fill="none" stroke="white" strokeWidth="0.15" />
+           <circle cx="200" cy="100" r="110" fill="none" stroke="white" strokeWidth="0.15" />
         </svg>
+      </div>
+
+      {/* Dynamic Lens Flares System */}
+      <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-60">
+        <div 
+          className="absolute w-40 h-40 rounded-full bg-[var(--holo-cyan)]/10 blur-[60px]"
+          style={{ 
+            left: `${sun.x / 4}%`, 
+            top: `${sun.y / 2}%`,
+            transform: `translate(-50%, -50%) scale(${1 + Math.sin(ticks * 0.002) * 0.2})` 
+          }}
+        />
+        <div 
+          className="absolute w-20 h-20 rounded-full bg-[var(--holo-violet)]/10 blur-[40px]"
+          style={{ 
+            left: `${moon.x / 4 + 10}%`, 
+            top: `${moon.y / 2 - 10}%`,
+            transform: `translate(-50%, -50%) scale(${0.8 + Math.cos(ticks * 0.003) * 0.1})` 
+          }}
+        />
       </div>
 
       <div className="absolute inset-0 flex items-center justify-center">
         <svg viewBox="0 0 400 200" className="w-full h-full p-10 overflow-visible">
-          <circle cx="200" cy="100" r="85" fill="none" stroke="white" strokeWidth="0.1" strokeDasharray="1 5" className="animate-spin-slow" />
-          <circle cx="200" cy="100" r="65" fill="none" stroke="white" strokeWidth="0.2" strokeDasharray="10 20" style={{ animation: 'rotate 120s linear infinite reverse' }} className="opacity-20" />
-          <circle cx="200" cy="100" r="2" fill="#7AA7A1" className="animate-pulse" />
-          <circle cx="200" cy="100" r="4" fill="none" stroke="#7AA7A1" strokeWidth="0.5" className="animate-ping opacity-30" />
-          
-          <g className="opacity-40">
-            <path d="M 100 40 Q 200 20 280 60" fill="none" stroke="#C9A46A" strokeWidth="0.3" strokeDasharray="2 2" className="animate-pulse" />
-            <path d="M 280 60 Q 300 100 160 150" fill="none" stroke="#8F7AD1" strokeWidth="0.3" strokeDasharray="2 2" />
-            <path d="M 100 40 Q 120 100 160 150" fill="none" stroke="#7AA7A1" strokeWidth="0.3" strokeDasharray="2 2" />
+          <defs>
+            <radialGradient id="sunGrad" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stopColor="white" />
+              <stop offset="25%" stopColor="var(--holo-gold)" />
+              <stop offset="100%" stopColor="#4d3211" />
+            </radialGradient>
+            <radialGradient id="moonGrad" cx="30%" cy="30%" r="70%">
+              <stop offset="0%" stopColor="#e3dff5" />
+              <stop offset="60%" stopColor="#8F7AD1" />
+              <stop offset="100%" stopColor="#221c38" />
+            </radialGradient>
+            <radialGradient id="ascGrad" cx="30%" cy="30%" r="70%">
+              <stop offset="0%" stopColor="#d5e8e6" />
+              <stop offset="60%" stopColor="var(--holo-cyan)" />
+              <stop offset="100%" stopColor="#1a2b29" />
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Ruling Data - Background Floating Text */}
+          <g className="opacity-40 mono text-[5px] fill-white/80 font-bold uppercase tracking-widest pointer-events-none">
+            <text x={sun.x + 15} y={sun.y - 15}>RULER: {sunInfo.ruler}</text>
+            <text x={sun.x + 15} y={sun.y - 8}>ELEM: {sunInfo.element}</text>
+            
+            <text x={moon.x + 12} y={moon.y + 15}>RULER: {moonInfo.ruler}</text>
+            <text x={moon.x + 12} y={moon.y + 22}>ELEM: {moonInfo.element}</text>
+
+            <text x={asc.x - 40} y={asc.y - 5}>AC_RULER: {ascInfo.ruler}</text>
           </g>
 
-          <g className="animate-reveal group/sun" style={{ animationDelay: '0.2s' }}>
-             <line x1="200" y1="100" x2="100" y2="40" stroke="#C9A46A" strokeWidth="0.5" strokeDasharray="1 3" />
-             <circle cx="100" cy="40" r="7" fill="#0E1B33" stroke="#C9A46A" strokeWidth="1" className="group-hover/sun:scale-125 transition-transform" />
-             <text x="100" y="42" textAnchor="middle" className="text-[6px] fill-[#C9A46A] select-none font-bold">☉</text>
-             <text x="85" y="30" className="mono text-[4px] fill-[#C9A46A] uppercase font-bold tracking-widest opacity-0 group-hover/sun:opacity-100 transition-opacity">SUN_{konstellation.sun.toUpperCase()}</text>
+          {/* Aspect Lines */}
+          <g className="transition-all duration-700 opacity-60">
+            {sunMoonAspect && (
+              <line 
+                x1={sun.x} y1={sun.y} x2={moon.x} y2={moon.y} 
+                stroke={sunMoonAspect.color} strokeWidth="0.8" strokeDasharray="5 3" 
+                className="animate-pulse"
+              />
+            )}
+            {moonAscAspect && (
+              <line 
+                x1={moon.x} y1={moon.y} x2={asc.x} y2={asc.y} 
+                stroke={moonAscAspect.color} strokeWidth="0.8" strokeDasharray="5 3" 
+                className="animate-pulse"
+              />
+            )}
           </g>
 
-          <g className="animate-reveal group/moon" style={{ animationDelay: '0.4s' }}>
-             <line x1="200" y1="100" x2="280" y2="60" stroke="#8F7AD1" strokeWidth="0.5" strokeDasharray="1 3" />
-             <circle cx="280" cy="60" r="7" fill="#0E1B33" stroke="#8F7AD1" strokeWidth="1" className="group-hover/moon:scale-125 transition-transform" />
-             <text x="280" y="62" textAnchor="middle" className="text-[6px] fill-[#8F7AD1] select-none font-bold">☽</text>
-             <text x="285" y="52" className="mono text-[4px] fill-[#8F7AD1] uppercase font-bold tracking-widest opacity-0 group-hover/moon:opacity-100 transition-opacity">MOON_{konstellation.moon.toUpperCase()}</text>
+          {/* Core Calibration Center */}
+          <circle cx="200" cy="100" r="5" fill="var(--holo-gold)" filter="url(#glow)" className="animate-pulse" />
+          <circle cx="200" cy="100" r="180" fill="none" stroke="white" strokeWidth="0.05" opacity="0.1" />
+
+          {/* Volumetric Sun (Slow Eclipse Movement) */}
+          <g className="transition-transform duration-500 ease-out">
+            <circle cx={sun.x} cy={sun.y} r="14" fill="url(#sunGrad)" filter="url(#glow)" />
+            {/* Corona / Glare Ring */}
+            <circle cx={sun.x} cy={sun.y} r="18" fill="none" stroke="var(--holo-gold)" strokeWidth="0.4" strokeDasharray="4 8" className="animate-spin-slow" />
+            <text x={sun.x} y={sun.y + 3} textAnchor="middle" className="text-[10px] fill-[var(--navy)] select-none font-extrabold">☉</text>
           </g>
 
-          <g className="animate-reveal group/asc" style={{ animationDelay: '0.6s' }}>
-             <line x1="200" y1="100" x2="160" y2="150" stroke="#7AA7A1" strokeWidth="0.5" strokeDasharray="1 3" />
-             <circle cx="160" cy="150" r="7" fill="#0E1B33" stroke="#7AA7A1" strokeWidth="1" className="group-hover/asc:scale-125 transition-transform" />
-             <text x="160" y="152" textAnchor="middle" className="text-[5px] fill-[#7AA7A1] select-none font-bold uppercase">AC</text>
-             <text x="145" y="165" className="mono text-[4px] fill-[#7AA7A1] uppercase font-bold tracking-widest opacity-0 group-hover/asc:opacity-100 transition-opacity">ASC_{konstellation.rising.toUpperCase()}</text>
+          {/* Volumetric Moon (Phased Shading) */}
+          <g>
+            <circle cx={moon.x} cy={moon.y} r="9" fill="url(#moonGrad)" filter="url(#glow)" />
+            {/* Eclipse Shadow Overlay */}
+            <path 
+              d={`M ${moon.x - 9} ${moon.y} A 9 9 0 0 1 ${moon.x + 9} ${moon.y} A 6 9 0 0 0 ${moon.x - 9} ${moon.y}`} 
+              fill="rgba(0,0,0,0.4)" 
+              transform={`rotate(${(ticks * 0.05) % 360} ${moon.x} ${moon.y})`}
+            />
+            <text x={moon.x} y={moon.y + 3} textAnchor="middle" className="text-[9px] fill-white/90 select-none font-extrabold">☽</text>
           </g>
 
-          <path d="M 100 40 L 280 60 L 160 150 Z" fill="rgba(201, 164, 106, 0.05)" stroke="white" strokeWidth="0.1" className="animate-pulse" />
+          {/* Volumetric ASC Point (Rising Light Beam) */}
+          <g>
+            <circle cx={asc.x} cy={asc.y} r="7" fill="url(#ascGrad)" filter="url(#glow)" />
+            <text x={asc.x} y={asc.y + 2.5} textAnchor="middle" className="text-[6px] fill-white select-none font-extrabold">AC</text>
+            {/* Light Beam Indicator */}
+            <line 
+              x1={asc.x} y1={asc.y} x2={asc.x + 40} y2={asc.y - 40} 
+              stroke="var(--holo-cyan)" strokeWidth="0.2" opacity="0.3" 
+            />
+          </g>
         </svg>
       </div>
 
-      <div className="absolute top-8 left-10 flex flex-col gap-1">
+      {/* Top Indicators */}
+      <div className="absolute top-8 left-10 flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <Orbit size={14} className="text-[#C9A46A]" />
-          <span className="mono text-[9px] font-extrabold text-white/50 uppercase tracking-[0.4em]">Celestial_Resonance_Map</span>
+           <div className="w-2 h-2 rounded-full bg-[var(--holo-cyan)] animate-ping" />
+           <span className="mono text-[10px] font-extrabold text-white/60 uppercase tracking-[0.5em]">Live_Transit_Orbital</span>
         </div>
-        <div className="text-[10px] text-white serif italic opacity-80">Geometrische Resonanz der Geburtsmatrix</div>
+        <div className="h-4 w-[1px] bg-white/10" />
+        <div className="mono text-[9px] text-[var(--holo-gold)] font-bold uppercase tracking-widest">
+           Resonance: High
+        </div>
       </div>
 
-      <div className="absolute bottom-8 right-10 flex flex-col items-end gap-3">
-        <div className="flex gap-6">
-          <div className="flex items-center gap-2">
-            <Sun size={10} className="text-[#C9A46A]" />
-            <span className="mono text-[8px] text-white/30 uppercase tracking-widest font-bold">Essenz</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Moon size={10} className="text-[#8F7AD1]" />
-            <span className="mono text-[8px] text-white/30 uppercase tracking-widest font-bold">Reflexion</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ArrowUpRight size={10} className="text-[#7AA7A1]" />
-            <span className="mono text-[8px] text-white/30 uppercase tracking-widest font-bold">Projektion</span>
-          </div>
+      {/* Side Status Panel */}
+      <div className="absolute bottom-10 right-10 flex flex-col items-end gap-3 text-right">
+        <div className="mono text-[8px] text-white/40 uppercase tracking-[0.3em] font-bold">
+           Celestial_Engine: V4.1_DeepVolume
         </div>
-        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
-           <Activity size={10} className="text-[#7AA7A1] animate-pulse" />
-           <span className="mono text-[7px] text-white/60 uppercase tracking-[0.2em] font-bold">Sync: 104.2ms</span>
+        <div className="flex gap-1.5">
+           {Array.from({ length: 4 }).map((_, i) => (
+             <div key={i} className={`w-3 h-1 rounded-full ${i < 3 ? 'bg-[var(--holo-gold)]' : 'bg-white/10'}`} />
+           ))}
         </div>
       </div>
     </div>
@@ -252,70 +374,31 @@ const PlanetaryVisualization: React.FC<{ konstellation: any }> = ({ konstellatio
 };
 
 const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
-  const [activePillar, setActivePillar] = useState<number | null>(0);
-  const [hoveredPillar, setHoveredPillar] = useState<number | null>(null);
   const [shineKey, setShineKey] = useState(0);
   const [aiInsight, setAiInsight] = useState(data.bedeutung);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
-    setShineKey(prev => prev + 1);
-  }, [activePillar]);
-
   const generateDeepInsight = async () => {
     setIsGenerating(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-      const prompt = `Du bist ein Experte für Astrologie (westlich) und BaZi (chinesisch). Analysiere diese Konfiguration: 
-      Westlich: Sonne ${data.konstellation.sun}, Mond ${data.konstellation.moon}, AC ${data.konstellation.rising}.
-      BaZi: Tierkreis ${data.tierkreis}, Monatstier ${data.monatstier}, Element ${data.element}.
-      Erstelle eine tiefgründige, poetische und präzise 'Quanten-Synergie-Analyse' (ca. 60 Wörter) in Deutsch.
-      Konzentriere dich auf die Schnittmenge der beiden Systeme. Was bedeutet diese Kombination für das innere Potenzial?
-      Verwende einen modernen, retro-futuristischen Ton.`;
-
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const promptText = `Analysiere Sonne ${data.konstellation.sun}, Mond ${data.konstellation.moon}, AC ${data.konstellation.rising} und BaZi Tierkreis ${data.tierkreis} in einem poetischen, modernem Ton (ca. 40 Wörter). Fokus auf die Dynamik zwischen den Systemen.`;
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: prompt,
+        contents: promptText,
       });
-
-      if (response.text) {
-        setAiInsight(response.text.trim());
-      }
-    } catch (error) {
-      console.error("AI Insight Generation failed:", error);
+      const text = response.text;
+      if (text) setAiInsight(text.trim());
+      setShineKey(p => p + 1);
+    } catch (e) {
+      console.error(e);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const tierkreisClean = data.tierkreis.replace(/\s/g, '');
-  const combinedHeader = `${tierkreisClean} Sonne: ${data.konstellation.sun} AC ${data.konstellation.rising}`;
-
-  const pillars = [
-    { 
-      label: 'JAHR', title: 'Ahnenerbe', stem: 'Metall (Geng)', branch: 'Pferd (Wu)', element: 'Yang Metall', aspect: 'Äußeres Image',
-      hiddenStems: ['Feuer (Ding)', 'Erde (Ji)'], strength: 78,
-      meaning: 'Dein soziales Erbe und der erste Eindruck, den du in der Welt hinterlässt. Geprägt von Disziplin und Schnelligkeit.'
-    },
-    { 
-      label: 'MONAT', title: 'Eltern/Karriere', stem: 'Erde (Ji)', branch: 'Ziege (Wei)', element: 'Yin Erde', aspect: 'Berufung',
-      hiddenStems: ['Erde (Ji)', 'Feuer (Ding)', 'Holz (Yi)'], strength: 64,
-      meaning: 'Der Ursprung deines Ehrgeizes und das Fundament deiner beruflichen Identität. Stabil und nährend.'
-    },
-    { 
-      label: 'TAG', title: 'Selbstkern', stem: 'Wasser (Gui)', branch: 'Hahn (You)', element: 'Yin Wasser', aspect: 'Inneres Wesen',
-      hiddenStems: ['Metall (Xin)'], strength: 92,
-      meaning: 'Dein wahres Ich und dein engstes Umfeld. Eine tiefe Quelle der Intuition und analytischen Klarheit.'
-    },
-    { 
-      label: 'STUNDE', title: 'Zukunft/Ideale', stem: 'Metall (Xin)', branch: 'Schwein (Hai)', element: 'Yin Metall', aspect: 'Bestimmung',
-      hiddenStems: ['Wasser (Ren)', 'Holz (Jia)'], strength: 55,
-      meaning: 'Deine Wünsche, Träume und das Vermächtnis, das du hinterlassen willst. Scharfsinnig und fließend.'
-    },
-  ];
-
   return (
-    <div className="relative animate-reveal">
+    <div className="relative animate-reveal transition-colors duration-500">
       <div className="absolute -top-16 left-0 w-full flex justify-center pointer-events-none">
         <div className="cluster-title serif uppercase tracking-[1.2em]">MANIFESTO</div>
       </div>
@@ -324,51 +407,41 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
         <div key={shineKey} className="scan-shine-effect" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
-          <div className="lg:col-span-5 p-12 lg:border-r border-[#E6E0D8] flex flex-col items-center justify-center relative bg-[#F6F3EE]/40">
+          <div className="lg:col-span-5 p-12 lg:border-r border-[var(--stroke)] flex flex-col items-center justify-center relative bg-[var(--bg-paper)]/40 transition-colors duration-500">
             <div className="absolute top-10 left-10 flex items-center gap-3">
-              <Hexagon size={16} className="text-[#C9A46A]" />
-              <span className="mono text-[9px] text-[#5A6477] font-bold tracking-[0.4em] uppercase">Core_Matrix</span>
+              <Hexagon size={16} className="text-[var(--holo-gold)]" />
+              <span className="mono text-[9px] text-[var(--muted)] font-bold tracking-[0.4em] uppercase">Core_Matrix</span>
             </div>
-            
-            <div className="relative mb-12">
-              <SigilPortrait />
-            </div>
-
-            <div className="text-center">
-              <div className="mono text-[10px] text-[#C9A46A] font-extrabold uppercase tracking-[0.6em] mb-4">Master Identity</div>
-              <h2 className="serif text-4xl text-[#0E1B33] font-light tracking-tighter uppercase leading-tight mb-2">
-                {combinedHeader}
+            <div className="relative mb-12"><SigilPortrait /></div>
+            <div className="text-center relative z-10">
+              <div className="mono text-[10px] text-[var(--holo-gold)] font-extrabold uppercase tracking-[0.6em] mb-4">Master Identity</div>
+              <h2 className="serif text-4xl text-[var(--navy)] font-light tracking-tighter uppercase leading-tight mb-2">
+                {data.tierkreis} {data.konstellation.sun}
               </h2>
-              <div className="mt-6 flex items-center justify-center gap-4">
-                <div className="w-8 h-[1px] bg-[#E6E0D8]" />
-                <span className="text-[#5A6477] mono text-[9px] font-bold tracking-[0.3em] uppercase opacity-60">Status: Verifiziert</span>
-                <div className="w-8 h-[1px] bg-[#E6E0D8]" />
-              </div>
             </div>
           </div>
 
-          <div className="lg:col-span-7 p-14 flex flex-col justify-center">
-            <div className="flex justify-between items-center mb-10 border-b border-[#E6E0D8] pb-6">
+          <div className="lg:col-span-7 p-14 flex flex-col justify-center bg-[var(--card-bg)] transition-colors duration-500">
+            <div className="flex justify-between items-center mb-10 border-b border-[var(--stroke)] pb-6">
               <div className="flex items-center gap-5">
-                <div className="p-3 bg-[#0E1B33] rounded-2xl">
-                  <Database size={20} className="text-[#7AA7A1]" />
+                <div className="p-3 bg-[var(--navy)] rounded-2xl">
+                  <Database size={20} className="text-[var(--holo-cyan)]" />
                 </div>
                 <div>
-                  <h3 className="serif text-2xl text-[#0E1B33] font-medium tracking-tight">Charakter-Synthese</h3>
-                  <div className="mono text-[9px] text-[#5A6477] uppercase tracking-widest mt-1">Multi-Domain Astrology Feed</div>
+                  <h3 className="serif text-2xl text-[var(--navy)] font-medium tracking-tight">Charakter-Synthese</h3>
+                  <div className="mono text-[9px] text-[var(--muted)] uppercase tracking-widest mt-1">Astro_Bazi_Feed</div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-1 mb-10">
+            <div className="space-y-3 mb-10">
               <DataRow label="Monatstier" value={data.monatstier} icon={CircleDot} isBazi />
               <DataRow label="Tagestier" value={data.tagestier} icon={Zap} isBazi />
-              <DataRow label="Stunden Meister" value={data.stundenMeister} icon={Cpu} isBazi />
               <DataRow label="Element" value={<ElementBadge name={data.element} />} icon={Layers} />
               <DataRow 
                 label="Konstellation" 
                 value={
-                  <div className="flex flex-wrap justify-end gap-x-8 gap-y-4">
+                  <div className="flex flex-wrap justify-end gap-x-8 gap-y-6">
                     <ZodiacBadge prefix="Sonne" sign={data.konstellation.sun} />
                     <ZodiacBadge prefix="Mond" sign={data.konstellation.moon} />
                     <ZodiacBadge prefix="Rising" sign={data.konstellation.rising} />
@@ -378,180 +451,25 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
               />
             </div>
 
-            <div className="mb-10 mt-6">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="mono text-[10px] text-[#5A6477] font-bold uppercase tracking-[0.4em]">BaZi Four Pillars Matrix</span>
-                <div className="h-[1px] flex-grow bg-[#E6E0D8]" />
-                <div className="flex items-center gap-2">
-                  <ShieldCheck size={12} className="text-[#C9A46A]" />
-                  <span className="mono text-[8px] uppercase tracking-widest font-bold text-[#A1A1AA]">Core Calibration</span>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-4 gap-3 mb-6 relative">
-                {pillars.map((p, idx) => (
-                  <div key={idx} className="relative group/tab">
-                    <button
-                      onMouseEnter={() => setHoveredPillar(idx)}
-                      onMouseLeave={() => setHoveredPillar(null)}
-                      onClick={() => setActivePillar(idx)}
-                      className={`w-full relative flex flex-col items-center py-4 rounded-xl border transition-all duration-300 overflow-hidden ${
-                        activePillar === idx 
-                          ? 'bg-[#0E1B33] border-[#0E1B33] text-white shadow-xl translate-y-[-2px]' 
-                          : 'bg-white border-[#E6E0D8] text-[#5A6477] hover:border-[#C9A46A] hover:bg-[#F6F3EE] hover:scale-[1.02]'
-                      }`}
-                    >
-                      <div className={`absolute top-0 left-0 right-0 h-[3px] transition-all duration-500 ${
-                        activePillar === idx ? 'opacity-100 scale-x-100' : 'opacity-40 scale-x-75 group-hover/tab:opacity-100 group-hover/tab:scale-x-100'
-                      }`} style={{ background: 'linear-gradient(90deg, #8F7AD1, #7AA7A1, #C9A46A)' }} />
-                      
-                      <span className="mono text-[9px] font-bold tracking-widest mb-1">{p.label}</span>
-                      <span className="text-[10px] opacity-60 uppercase font-medium">{p.title}</span>
-                      <div className={`w-1 h-1 rounded-full mt-2 transition-all ${activePillar === idx ? 'bg-[#7AA7A1] scale-150 shadow-[0_0_8px_#7AA7A1]' : 'bg-[#E6E0D8]'}`} />
-                    </button>
-
-                    {hoveredPillar === idx && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-60 bg-[#0E1B33] text-white p-5 rounded-[2rem] shadow-2xl z-[100] animate-reveal pointer-events-none border border-white/10">
-                        <div className="mono text-[8px] text-[#C9A46A] font-extrabold uppercase tracking-[0.4em] mb-3 border-b border-white/10 pb-2 flex items-center gap-2">
-                          <Activity size={10} className="animate-pulse" /> Pillar_Data_Link
-                        </div>
-                        <div className="space-y-4">
-                          <div>
-                            <span className="mono text-[7px] uppercase text-white/40 tracking-wider block mb-1">Domäne / Aspect</span>
-                            <div className="text-[12px] font-bold text-[#7AA7A1] leading-tight">{p.aspect}</div>
-                          </div>
-                          <div>
-                            <span className="mono text-[7px] uppercase text-white/40 tracking-wider block mb-2">Verborgene Stämme</span>
-                            <div className="flex flex-wrap gap-1.5">
-                              {p.hiddenStems.map((s, i) => (
-                                <span key={i} className="text-[9px] bg-white/5 px-2 py-1 rounded-lg border border-white/10 text-white/90 font-bold">{s}</span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0E1B33] rotate-45 border-r border-b border-white/10 -mt-1.5" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className={`bg-[#F6F3EE] rounded-3xl p-8 border border-[#E6E0D8] transition-all duration-500 relative overflow-hidden shadow-inner ${activePillar !== null ? 'min-h-[220px]' : 'min-h-0'}`}>
-                <div className={`absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-[#7AA7A1] to-[#C9A46A] transition-all duration-700 ${activePillar !== null ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'}`} />
-                <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none"><Hexagon size={160} /></div>
-                
-                {activePillar !== null ? (
-                  <div className="animate-reveal relative z-10 w-full" key={`pillar-detail-${activePillar}`}>
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="mono text-[10px] font-bold text-[#C9A46A] uppercase tracking-widest"><ElementBadge name={pillars[activePillar].element} /></span>
-                          <span className="w-1 h-1 rounded-full bg-[#E6E0D8]" />
-                          <span className="mono text-[9px] text-[#A1A1AA] uppercase tracking-widest font-bold">Pillar_Expanded_Details</span>
-                        </div>
-                        <h5 className="serif text-3xl text-[#0E1B33] leading-none">{pillars[activePillar].aspect}</h5>
-                      </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#E6E0D8] shadow-sm">
-                          <TrendingUp size={12} className="text-[#7AA7A1]" /><span className="mono text-[9px] font-bold text-[#0E1B33]">{pillars[activePillar].strength}% Kraft</span>
-                        </div>
-                        <span className="mono text-[7px] text-[#A1A1AA] uppercase tracking-widest">Resonanz_Level</span>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2"><Anchor size={12} className="text-[#0E1B33] opacity-40" /><span className="mono text-[8px] uppercase text-[#5A6477] font-bold tracking-wider">Himmelsstamm</span></div>
-                        <div className="text-sm font-bold text-[#0E1B33] bg-white px-3 py-2 rounded-xl border border-[#E6E0D8]/60 inline-block shadow-sm">{pillars[activePillar].stem}</div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2"><Compass size={12} className="text-[#0E1B33] opacity-40" /><span className="mono text-[8px] uppercase text-[#5A6477] font-bold tracking-wider">Erdzweig</span></div>
-                        <div className="text-sm font-bold text-[#0E1B33] bg-white px-3 py-2 rounded-xl border border-[#E6E0D8]/60 inline-block shadow-sm">{pillars[activePillar].branch}</div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2"><Layers size={12} className="text-[#C9A46A]" /><span className="mono text-[8px] uppercase text-[#C9A46A] font-bold tracking-wider">Verborgene Stämme</span></div>
-                        <div className="flex flex-wrap gap-2">
-                          {pillars[activePillar].hiddenStems.map((s, i) => (<span key={i} className="text-[11px] font-bold text-[#5A6477] bg-[#E6E0D8]/30 px-2 py-1 rounded-md border border-[#E6E0D8]/60">{s}</span>))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-8 pt-6 border-t border-[#E6E0D8]/60">
-                      <p className="text-[#5A6477] text-xs leading-relaxed italic font-medium"><Info size={12} className="inline mr-2 text-[#C9A46A]" />{pillars[activePillar].meaning}</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center flex-grow py-12 text-[#A1A1AA] gap-4">
-                    <ChevronRight size={24} className="animate-pulse opacity-40" />
-                    <span className="mono text-[10px] uppercase tracking-[0.4em] font-bold">Wähle eine Säule zur Detail-Analyse</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
+            {/* Enhanced Visualization Block */}
             <PlanetaryVisualization konstellation={data.konstellation} />
 
+            {/* AI Synergy Section */}
             <div className="relative mt-24 group/ai">
-              <div className="absolute -top-6 left-10 px-5 py-2 bg-[#0E1B33] text-white mono text-[11px] font-bold uppercase tracking-[0.4em] rounded-full shadow-2xl z-20 border border-white/20 flex items-center gap-3">
-                <Sparkles size={14} className="text-[#C9A46A] animate-pulse" />
-                Quantum_Synergy_Module
+              <div className="absolute -top-6 left-10 px-6 py-2.5 bg-[var(--navy)] text-[var(--card-bg)] mono text-[11px] font-bold uppercase tracking-[0.4em] rounded-full shadow-xl z-20 border border-white/10 flex items-center gap-3">
+                <Sparkles size={14} className="text-[var(--holo-violet)] animate-pulse" />
+                Synergy_Analysis
               </div>
-
-              <div className="bg-white rounded-[3rem] p-16 border border-[#C9A46A]/30 relative overflow-hidden shadow-[0_15px_50px_-10px_rgba(201,164,106,0.15)] transition-all hover:shadow-[0_20px_60px_-10px_rgba(201,164,106,0.25)] group">
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none overflow-hidden mono text-[7px] text-[#0E1B33] p-8 leading-tight">
-                   {Array.from({ length: 20 }).map((_, i) => (
-                     <div key={i}>PROC_THREAD_{i}: CROSS_SYSTEM_COMPATIBILITY_{Math.random().toString(36).substring(7)}</div>
-                   ))}
-                </div>
-
-                <div className="relative z-10 flex flex-col md:flex-row gap-16 items-start">
-                  <div className="flex-grow">
-                    <div className="flex items-center gap-4 mb-3">
-                       <Binary size={16} className="text-[#7AA7A1] opacity-60" />
-                       <h4 className="mono text-[12px] font-extrabold text-[#C9A46A] uppercase tracking-[0.6em] opacity-80">Synergy Analysis</h4>
-                    </div>
-                    <h3 className="serif text-4xl lg:text-5xl font-light text-[#0E1B33] tracking-tighter mb-8 border-b border-[#E6E0D8]/50 pb-6 uppercase">Cross-System Compatibility</h3>
-                    
-                    <div className="relative min-h-[120px]">
-                      {isGenerating ? (
-                        <div className="flex flex-col items-center justify-center py-12 gap-5 animate-pulse bg-[#F6F3EE]/40 rounded-3xl border border-dashed border-[#E6E0D8]">
-                          <Loader2 size={36} className="text-[#C9A46A] animate-spin" />
-                          <span className="mono text-[11px] text-[#5A6477] uppercase tracking-[0.3em] font-bold">Resonanz-Matrix wird kalibriert...</span>
-                        </div>
-                      ) : (
-                        <div className="p-2">
-                           <p className="text-[#0E1B33] italic font-light leading-relaxed serif text-3xl animate-reveal">
-                            "{aiInsight}"
-                          </p>
-                          <div className="mt-8 flex gap-3">
-                             <div className="px-3 py-1 bg-[#F6F3EE] rounded-md border border-[#E6E0D8] mono text-[8px] text-[#5A6477] font-bold uppercase tracking-widest">Source: BaZi</div>
-                             <div className="px-3 py-1 bg-[#F6F3EE] rounded-md border border-[#E6E0D8] mono text-[8px] text-[#5A6477] font-bold uppercase tracking-widest">Source: Western</div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-5 shrink-0 pt-10 md:pt-4">
-                    <button 
-                      onClick={generateDeepInsight}
-                      disabled={isGenerating}
-                      className="group/btn relative px-10 py-5 bg-[#0E1B33] rounded-2xl overflow-hidden transition-all hover:scale-105 active:scale-95 disabled:opacity-50 shadow-2xl shadow-[#0E1B33]/20"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-[#8F7AD1] via-[#7AA7A1] to-[#C9A46A] opacity-0 group-hover/btn:opacity-30 transition-opacity" />
-                      <div className="relative z-10 flex items-center gap-3 text-white">
-                        <Wand2 size={18} className="text-[#C9A46A] group-hover/btn:rotate-[30deg] transition-transform" />
-                        <span className="mono text-[11px] font-extrabold uppercase tracking-[0.4em]">Deep_Calibration</span>
-                      </div>
-                    </button>
-                    
-                    <div className="flex items-center gap-3 px-5 py-3 bg-[#F6F3EE] rounded-xl border border-[#E6E0D8] shadow-sm">
-                      <Activity size={12} className="text-[#7AA7A1]" />
-                      <span className="mono text-[9px] text-[#5A6477] font-bold uppercase tracking-widest">System: Gemini_3_Flash</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-0 right-0 p-8 opacity-[0.07] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
-                  <Sparkles size={100} />
+              <div className="bg-[var(--bg-paper)] rounded-[3rem] p-16 border border-[var(--stroke)] relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-[var(--holo-gold)]/20">
+                <div className="relative z-10">
+                  <h3 className="serif text-3xl font-light text-[var(--navy)] tracking-tight mb-8 border-b border-[var(--stroke)] pb-6 uppercase flex items-center gap-4">
+                    <span className="w-8 h-[1px] bg-[var(--holo-cyan)]"></span>
+                    Cross-System Compatibility
+                  </h3>
+                  <p className="text-[var(--navy)] italic font-light leading-relaxed serif text-3xl">"{aiInsight}"</p>
+                  <button onClick={generateDeepInsight} disabled={isGenerating} className="mt-12 px-10 py-5 bg-[var(--navy)] text-[var(--card-bg)] rounded-2xl mono text-[11px] font-extrabold uppercase tracking-[0.4em] flex items-center gap-3 hover:scale-105 hover:bg-[var(--holo-violet)] transition-all shadow-xl shadow-black/10">
+                    {isGenerating ? <Loader2 size={18} className="animate-spin" /> : <Wand2 size={18} />} Deep_Calibration
+                  </button>
                 </div>
               </div>
             </div>
