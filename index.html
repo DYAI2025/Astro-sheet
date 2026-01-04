@@ -45,13 +45,24 @@
       --holo-gold: #FBBF24;
     }
 
+    /* Global transition for theme changes */
+    *, *::before, *::after {
+      transition-property: background-color, border-color, color, fill, stroke, box-shadow, opacity;
+      transition-duration: var(--transition-speed);
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Prevent transition jumps on specific layout-critical elements if necessary */
+    .no-transition {
+      transition: none !important;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       color: var(--navy);
       background-color: var(--bg-paper);
       overflow-x: hidden;
       min-height: 100vh;
-      transition: background-color var(--transition-speed), color var(--transition-speed);
     }
     
     .serif { font-family: 'Cormorant Garamond', serif; }
@@ -102,7 +113,6 @@
         radial-gradient(circle at 85% 15%, var(--navy) 0.6px, transparent 0.6px);
       background-size: 400px 400px;
       opacity: 0.08;
-      transition: opacity var(--transition-speed);
     }
 
     .premium-card {
@@ -112,7 +122,6 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 15px 45px -15px rgba(0, 0, 0, 0.05);
-      transition: all var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
     }
     
     .dark .premium-card {
@@ -138,7 +147,6 @@
       letter-spacing: 0.35em;
       color: var(--navy);
       font-weight: 300;
-      transition: color var(--transition-speed), opacity var(--transition-speed);
     }
 
     .dark .cluster-title { opacity: 0.05; color: #FFFFFF; }

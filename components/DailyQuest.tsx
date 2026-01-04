@@ -44,14 +44,16 @@ const Planet3D: React.FC<PlanetProps & { currentRotation: number }> = ({ name, s
   const x = Math.cos(radian) * orbitRadius;
   const y = Math.sin(radian) * orbitRadius;
   
-  const zDepth = Math.sin(radian) * (orbitRadius * 0.15); 
-  const depthScale = 0.8 + (Math.sin(radian) + 1) * 0.2;
+  // Enhanced depth simulation
+  const zDepth = Math.sin(radian) * (orbitRadius * 0.2); 
+  const depthScale = 0.75 + ((Math.sin(radian) + 1) / 2) * 0.5;
 
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ transformStyle: 'preserve-3d' }}>
+      {/* Orbit Line */}
       <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
-        style={{ width: orbitRadius * 2, height: orbitRadius * 2, transform: 'translateZ(-1px)' }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5 shadow-inner"
+        style={{ width: orbitRadius * 2, height: orbitRadius * 2, transform: 'translateZ(-2px)' }}
       />
       
       <div 
@@ -61,27 +63,45 @@ const Planet3D: React.FC<PlanetProps & { currentRotation: number }> = ({ name, s
           width: size,
           height: size,
           transformStyle: 'preserve-3d',
-          zIndex: Math.floor(zDepth + 200)
+          zIndex: Math.floor(zDepth + 500) // Ensure sorting relative to other celestial bodies
         }}
       >
         <div 
-          className="w-full h-full relative group/planet flex items-center justify-center"
+          className="w-full h-full relative group/planet flex items-center justify-center transition-transform duration-500"
           style={{ transformStyle: 'preserve-3d' }}
         >
+          {/* Planet Atmosphere/Glow */}
           <div 
-            className="absolute inset-0 rounded-full transition-all duration-700 group-hover/planet:scale-125"
+            className="absolute inset-[-4px] rounded-full opacity-40 blur-[6px] transition-all duration-700 group-hover/planet:opacity-80 group-hover/planet:blur-[10px]"
+            style={{ backgroundColor: color }}
+          />
+          
+          {/* Planet Body with 3D Spherical Gradient */}
+          <div 
+            className="absolute inset-0 rounded-full transition-all duration-700 group-hover/planet:scale-110 shadow-2xl"
             style={{ 
-              backgroundColor: color,
-              boxShadow: `0 0 ${size * 3}px ${color}88`
+              background: `radial-gradient(circle at 30% 30%, white 0%, ${color} 40%, rgba(0,0,0,0.8) 100%)`,
+              boxShadow: `inset -2px -2px 10px rgba(0,0,0,0.8), 0 0 20px ${color}44`
             }}
           />
-          <div className="absolute inset-0 rounded-full z-10" style={{ background: `radial-gradient(circle at 35% 35%, rgba(255,255,255,0.7) 0%, transparent 80%), radial-gradient(circle at 75% 75%, rgba(0,0,0,0.5) 0%, transparent 90%)` }} />
-          <div className="absolute top-[12%] left-[12%] w-[35%] h-[35%] bg-white/40 blur-[2px] rounded-full z-[15]" />
+
+          {/* Planet Highlight Layer */}
+          <div className="absolute inset-0 rounded-full z-10 opacity-30 pointer-events-none" style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.8) 0%, transparent 50%)` }} />
           
-          <div className="absolute top-full mt-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 group-hover/planet:opacity-100 transition-all duration-500 translate-y-3 group-hover/planet:translate-y-0">
-            <div className="mono text-[8px] text-white font-extrabold tracking-[0.3em] whitespace-nowrap bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/20 uppercase shadow-2xl">
+          {/* Saturn's Rings specifically */}
+          {hasRings && (
+            <div 
+              className="absolute w-[240%] h-[120%] border-[6px] border-[var(--holo-gold)]/30 rounded-[100%] blur-[0.5px] pointer-events-none"
+              style={{ transform: 'rotateX(75deg) rotateY(15deg)', boxShadow: '0 0 10px rgba(0,0,0,0.5)' }}
+            />
+          )}
+
+          {/* Label Display */}
+          <div className="absolute top-full mt-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 group-hover/planet:opacity-100 transition-all duration-700 translate-y-4 group-hover/planet:translate-y-0">
+            <div className="mono text-[9px] text-white font-extrabold tracking-[0.4em] whitespace-nowrap bg-black/90 backdrop-blur-xl px-4 py-2 rounded-xl border border-white/20 uppercase shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
               {name}
             </div>
+            <div className="w-px h-6 bg-gradient-to-b from-white/40 to-transparent" />
           </div>
         </div>
       </div>
@@ -105,7 +125,7 @@ const CelestialAspects: React.FC<{ rotations: number[]; planets: PlanetProps[] }
   }, [rotations]);
 
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-50 overflow-visible z-0" viewBox="-250 -250 500 500" style={{ transform: 'translateZ(-10px)' }}>
+    <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40 overflow-visible z-[10]" viewBox="-300 -300 600 600" style={{ transform: 'translateZ(-1px)' }}>
       {aspects.map((aspect, idx) => {
         const rad1 = (rotations[aspect.p1] * Math.PI) / 180;
         const rad2 = (rotations[aspect.p2] * Math.PI) / 180;
@@ -120,8 +140,8 @@ const CelestialAspects: React.FC<{ rotations: number[]; planets: PlanetProps[] }
             key={idx}
             x1={x1} y1={y1} x2={x2} y2={y2} 
             stroke={aspect.color} 
-            strokeWidth="0.75" 
-            strokeDasharray="6 6"
+            strokeWidth="0.5" 
+            strokeDasharray="4 8"
             className="animate-pulse"
           />
         );
@@ -132,12 +152,12 @@ const CelestialAspects: React.FC<{ rotations: number[]; planets: PlanetProps[] }
 
 const SolarSystem3D: React.FC = () => {
   const planets: PlanetProps[] = [
-    { name: 'MERCURY', size: 6, orbitRadius: 55, period: 12, color: '#9CA3AF', baseAngle: 45 },
-    { name: 'VENUS', size: 9, orbitRadius: 85, period: 28, color: '#FDE68A', baseAngle: 120 },
-    { name: 'EARTH', size: 10, orbitRadius: 115, period: 42, color: '#22D3EE', baseAngle: 0 },
-    { name: 'MARS', size: 8, orbitRadius: 150, period: 68, color: '#FBBF24', baseAngle: 280 },
-    { name: 'JUPITER', size: 20, orbitRadius: 200, period: 160, color: '#E5E7EB', baseAngle: 190 },
-    { name: 'SATURN', size: 16, orbitRadius: 260, period: 320, color: '#FEF9C3', hasRings: true, baseAngle: 60 },
+    { name: 'MERCURY', size: 6, orbitRadius: 65, period: 15, color: '#9CA3AF', baseAngle: 45 },
+    { name: 'VENUS', size: 10, orbitRadius: 100, period: 35, color: '#FDE68A', baseAngle: 120 },
+    { name: 'EARTH', size: 12, orbitRadius: 135, period: 55, color: '#22D3EE', baseAngle: 0 },
+    { name: 'MARS', size: 9, orbitRadius: 175, period: 90, color: '#F87171', baseAngle: 280 },
+    { name: 'JUPITER', size: 24, orbitRadius: 230, period: 200, color: '#D4D4D8', baseAngle: 190 },
+    { name: 'SATURN', size: 20, orbitRadius: 290, period: 400, color: '#FDE68A', hasRings: true, baseAngle: 60 },
   ];
 
   const [rotations, setRotations] = useState<number[]>(planets.map(p => p.baseAngle));
@@ -158,20 +178,31 @@ const SolarSystem3D: React.FC = () => {
 
   return (
     <div className="relative w-full h-full flex items-center justify-center">
-      <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1500px', transformStyle: 'preserve-3d' }}>
+      <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '2000px', transformStyle: 'preserve-3d' }}>
         <div className="relative w-full h-full flex items-center justify-center" style={{ transform: 'rotateX(65deg)', transformStyle: 'preserve-3d' }}>
+          
           <CelestialAspects rotations={rotations} planets={planets} />
-          {/* Central Star - The Sun */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 z-20" style={{ transform: 'rotateX(-65deg)', transformStyle: 'preserve-3d' }}>
-            <div className="absolute inset-[-60px] rounded-full bg-[var(--holo-gold)]/30 blur-[60px] animate-pulse" />
-            <div className="absolute inset-0 rounded-full bg-[var(--holo-gold)] shadow-[inset_0_0_30px_white,0_0_40px_var(--holo-gold)] flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/40 via-transparent to-white/40 opacity-80 mix-blend-overlay" />
-              <div className="w-8 h-8 rounded-full bg-white/95 blur-[4px]" />
+
+          {/* Central Star - The Sun with Volumetric Layers */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 z-[1000]" style={{ transform: 'rotateX(-65deg)', transformStyle: 'preserve-3d' }}>
+            {/* Massive Sun Bloom */}
+            <div className="absolute inset-[-100px] rounded-full bg-[var(--holo-gold)]/20 blur-[100px] animate-pulse pointer-events-none" />
+            <div className="absolute inset-[-40px] rounded-full bg-[var(--holo-gold)]/40 blur-[40px] animate-[pulse_3s_infinite]" />
+            
+            {/* Core Body */}
+            <div className="absolute inset-0 rounded-full bg-[var(--holo-gold)] shadow-[inset_0_0_40px_white,0_0_60px_var(--holo-gold)] flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,white_0%,#F59E0B_50%,#B45309_100%)] opacity-90" />
+              {/* Dynamic Lens Flare */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/60 via-transparent to-white/60 opacity-50 mix-blend-overlay animate-[spin_10s_linear_infinite]" />
+              <div className="w-10 h-10 rounded-full bg-white/95 blur-[6px]" />
             </div>
           </div>
+
+          {/* Planet Instances */}
           {planets.map((p, i) => (
             <Planet3D key={p.name} {...p} currentRotation={rotations[i]} />
           ))}
+
         </div>
       </div>
     </div>

@@ -109,6 +109,9 @@ const ZodiacBadge: React.FC<{ sign: string; prefix?: string }> = ({ sign, prefix
         </span>
         <span className="text-[var(--navy)] font-bold text-sm uppercase tracking-tight flex items-center gap-2">
           {sign}
+          <span className="text-[var(--holo-cyan)] text-lg leading-none opacity-60 group-hover/zodiac:opacity-100 transition-opacity">
+            {getZodiacSymbol(sign)}
+          </span>
           {rulerGlyph && <span className="text-[var(--muted)] text-[11px] opacity-60 font-medium group-hover/zodiac:opacity-100 transition-opacity">({rulerGlyph})</span>}
         </span>
       </div>
@@ -164,7 +167,7 @@ const ZodiacBadge: React.FC<{ sign: string; prefix?: string }> = ({ sign, prefix
   );
 };
 
-// --- BaZi Pillar Component with Golden-Ratio Proportions ---
+// --- BaZi Pillar Component with Enhanced Holo Design ---
 
 interface BaZiPillarData {
   label: string;
@@ -180,17 +183,17 @@ const BaZiPillar: React.FC<{ data: BaZiPillarData; active: boolean; onClick: () 
   return (
     <div className="relative group/pillar-container">
       {/* Premium Holo Edge Shimmer Overlay */}
-      <div className={`absolute -inset-[2.5px] rounded-[2.25rem] opacity-0 transition-all duration-700 pointer-events-none z-0 ${
+      <div className={`absolute -inset-[3px] rounded-[2.3rem] opacity-0 transition-all duration-700 pointer-events-none z-0 ${
         active 
-          ? 'opacity-100 bg-gradient-to-br from-[var(--holo-gold)] via-[var(--holo-cyan)] to-[var(--holo-violet)] animate-[holo-shimmer_6s_linear_infinite] shadow-[0_0_30px_rgba(182,237,242,0.3)]' 
-          : 'group-hover/pillar-container:opacity-20 bg-gradient-to-r from-[var(--stroke)] to-[var(--holo-cyan)]/20'
+          ? 'opacity-100 bg-gradient-to-br from-[var(--holo-gold)] via-[var(--holo-cyan)] to-[var(--holo-violet)] animate-[holo-shimmer_6s_linear_infinite] shadow-[0_0_30px_rgba(182,237,242,0.4)]' 
+          : 'group-hover/pillar-container:opacity-25 bg-gradient-to-r from-[var(--stroke)] to-[var(--holo-cyan)]/20'
       }`} 
       style={{ backgroundSize: '200% 200%' }}
       />
       
-      {/* Inner Glossy Highlight */}
-      <div className={`absolute inset-[1px] rounded-[2rem] bg-[var(--card-bg)] pointer-events-none z-[5] ${
-        active ? 'opacity-90' : 'opacity-0'
+      {/* Glossy Slab Effect */}
+      <div className={`absolute inset-0 rounded-[2rem] pointer-events-none z-[5] bg-white transition-opacity duration-700 ${
+        active ? 'opacity-10' : 'opacity-0'
       }`} />
 
       {/* Pillar Tab */}
@@ -204,6 +207,13 @@ const BaZiPillar: React.FC<{ data: BaZiPillarData; active: boolean; onClick: () 
             : 'bg-[var(--bg-paper)] border-[var(--stroke)] hover:bg-[var(--card-bg)] hover:border-transparent hover:translate-x-1.5 shadow-sm'
         }`}
       >
+        {/* Subtle Diagonal Scanline Animation */}
+        {active && (
+          <div className="absolute inset-0 pointer-events-none z-0">
+             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[scan-shine_3s_infinite_ease-in-out]" />
+          </div>
+        )}
+
         {/* Status Indicator Bar */}
         <div className={`absolute left-0 top-0 bottom-0 w-2 transition-all duration-700 ${
           active ? 'bg-gradient-to-b from-[var(--holo-cyan)] via-[var(--holo-gold)] to-[var(--holo-violet)]' : 'bg-[var(--stroke)] opacity-40'
@@ -216,7 +226,7 @@ const BaZiPillar: React.FC<{ data: BaZiPillarData; active: boolean; onClick: () 
                 ? 'bg-[var(--navy)] border-[var(--navy)] scale-110 shadow-2xl' 
                 : 'bg-[var(--bg-paper)] border-[var(--stroke)] group-hover/pillar:border-transparent'
              }`}>
-                <Cpu size={20} className={active ? 'text-[var(--holo-cyan)]' : 'text-[var(--muted)] group-hover/pillar:text-[var(--holo-cyan)]'} />
+                <Cpu size={22} className={active ? 'text-[var(--holo-cyan)]' : 'text-[var(--muted)] group-hover/pillar:text-[var(--holo-cyan)]'} />
              </div>
              <div>
                 <span className={`mono text-[11px] font-extrabold uppercase tracking-[0.5em] block mb-2 transition-colors ${active ? 'text-[var(--holo-gold)]' : 'text-[var(--muted)]'}`}>
@@ -229,8 +239,8 @@ const BaZiPillar: React.FC<{ data: BaZiPillarData; active: boolean; onClick: () 
           </div>
           <div className={`flex items-center gap-6 transition-all duration-700 ${active ? 'translate-x-4' : ''}`}>
              <div className={`flex flex-col items-end opacity-0 group-hover/pillar:opacity-100 transition-opacity ${active ? 'opacity-100' : ''}`}>
-               <span className="mono text-[9px] font-bold uppercase tracking-widest text-[var(--muted)]">Sync_Res</span>
-               <span className={`mono text-[10px] font-extrabold uppercase tracking-widest ${active ? 'text-[var(--holo-cyan)]' : 'text-[var(--navy)]'}`}>OK_STABLE</span>
+               <span className="mono text-[9px] font-bold uppercase tracking-widest text-[var(--muted)]">Matrix_Core</span>
+               <span className={`mono text-[10px] font-extrabold uppercase tracking-widest ${active ? 'text-[var(--holo-cyan)]' : 'text-[var(--navy)]'}`}>0x{Math.floor(Math.random() * 999)}</span>
              </div>
              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all border border-[var(--stroke)] ${active ? 'bg-[var(--holo-gold)] text-[var(--bg-paper)] rotate-180 border-transparent' : 'bg-[var(--bg-paper)] text-[var(--muted)]'}`}>
                <Info size={16} />
@@ -238,7 +248,7 @@ const BaZiPillar: React.FC<{ data: BaZiPillarData; active: boolean; onClick: () 
           </div>
         </div>
 
-        {/* Hover Tooltip */}
+        {/* Hover Tooltip - Futuristic Metrics */}
         {showTooltip && !active && (
           <div className="absolute left-[85%] bottom-[120%] mb-4 w-72 bg-[var(--card-bg)]/98 backdrop-blur-3xl text-[var(--navy)] p-8 rounded-[3rem] shadow-[0_40px_90px_rgba(0,0,0,0.3)] z-[100] animate-reveal border border-[var(--stroke)]">
              <div className="flex items-center gap-4 mb-6 border-b border-[var(--stroke)] pb-5">
@@ -477,7 +487,7 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
         <div key={shineKey} className="scan-shine-effect" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[700px]">
-          {/* Left Profile Section - Golden Ratio proportional approx (38.2%) */}
+          {/* Left Profile Section */}
           <div className="lg:col-span-5 p-16 lg:border-r border-[var(--stroke)] flex flex-col items-center justify-center relative bg-[var(--bg-paper)] transition-colors duration-500">
             <div className="absolute inset-0 opacity-[0.12] pointer-events-none bg-[radial-gradient(circle_at_top_right,var(--holo-gold),transparent_60%)]"></div>
             
@@ -497,7 +507,7 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
             </div>
           </div>
 
-          {/* Right Data Section - Golden Ratio proportional approx (61.8%) */}
+          {/* Right Data Section */}
           <div className="lg:col-span-7 p-20 flex flex-col justify-center bg-[var(--card-bg)] transition-colors duration-500 relative">
             <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(circle_at_bottom_left,var(--holo-cyan),transparent_70%)]"></div>
 
@@ -550,9 +560,10 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
 
             {/* AI Synergy Section */}
             <div className="relative mt-40 group/ai">
+              {/* synergy analysis header */}
               <div className="absolute -top-10 left-20 px-12 py-5 bg-[var(--navy)] text-[var(--bg-paper)] mono text-[14px] font-extrabold uppercase tracking-[0.5em] rounded-full shadow-[0_25px_60px_rgba(0,0,0,0.3)] z-30 border border-white/20 flex items-center gap-5 animate-reveal">
                 <Sparkles size={20} className="text-[var(--holo-gold)]" />
-                Synergy_Calibration
+                Synergy Analysis
               </div>
               
               <div className="bg-[var(--bg-paper)] rounded-[5rem] p-24 border border-[var(--stroke)] relative overflow-hidden transition-all duration-1000 hover:shadow-[0_40px_120px_rgba(0,0,0,0.1)] hover:border-[var(--holo-gold)]/30">
@@ -563,16 +574,16 @@ const IdentityBadges: React.FC<IdentityBadgesProps> = ({ data }) => {
                   <div className="mb-12 border-b border-[var(--stroke)] pb-12">
                     <h3 className="serif text-5xl font-light text-[var(--navy)] tracking-tight uppercase flex items-center gap-10 mb-6">
                       <span className="w-20 h-0.5 bg-[var(--holo-cyan)]"></span>
-                      Cross_System_Intelligence
+                      Cross-System Compatibility
                     </h3>
                     <div className="flex items-center gap-12 mt-4 ml-[100px]">
                       <div className="flex flex-col">
                         <span className="mono text-[10px] text-[var(--muted)] font-bold uppercase tracking-[0.3em] mb-2">Model_Engine</span>
-                        <span className="mono text-[12px] text-[var(--holo-cyan)] font-extrabold uppercase tracking-[0.2em]">Quantum_Astro_v3.2</span>
+                        <span className="mono text-[12px] text-[var(--holo-cyan)] font-extrabold uppercase tracking-[0.2em]">Calculated_v2.5_Astro</span>
                       </div>
                       <div className="w-px h-10 bg-[var(--stroke)]" />
                       <div className="flex flex-col">
-                        <span className="mono text-[10px] text-[var(--muted)] font-bold uppercase tracking-[0.3em] mb-2">Resonance Confidence</span>
+                        <span className="mono text-[10px] text-[var(--muted)] font-bold uppercase tracking-[0.3em] mb-2">Confidence Score</span>
                         <div className="flex items-center gap-4">
                           <span className="mono text-[13px] text-[var(--holo-gold)] font-extrabold uppercase tracking-widest">99.1%</span>
                           <div className="w-24 h-1.5 bg-[var(--stroke)] rounded-full overflow-hidden">
