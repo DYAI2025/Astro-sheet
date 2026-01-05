@@ -56,7 +56,11 @@ export interface Agent {
   id: string;
   name: string;
   type: string;
+  subtitle?: string;
   description: string;
+  tags?: string[];
+  statLabel?: string;
+  statValue?: string;
   premium?: boolean;
 }
 

@@ -121,9 +121,9 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
-      <div className="w-full max-w-xl bg-[#FEFDF9] rounded-[3rem] shadow-2xl overflow-hidden relative border border-[var(--stroke)] animate-reveal">
+      <div className="w-full max-w-xl bg-[var(--card-bg)] rounded-[3rem] shadow-2xl overflow-hidden relative border border-[var(--stroke)] animate-reveal">
         <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-black/5 rounded-full transition-colors z-20">
-          <X size={24} />
+          <X size={24} className="text-[var(--navy)]" />
         </button>
 
         <div className="p-12 md:p-16 h-[85vh] overflow-y-auto custom-scrollbar flex flex-col">
@@ -131,7 +131,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
             <div className="flex flex-col items-center text-center justify-center h-full space-y-10">
               <div className="w-40 h-40 rounded-full bg-[var(--holo-gold)]/20 flex items-center justify-center border border-[var(--holo-gold)] shadow-2xl relative">
                  <Sparkles className="text-[var(--holo-gold)] animate-pulse" size={64} />
-                 <div className="absolute inset-0 bg-white/20 blur-xl rounded-full" />
+                 <div className="absolute inset-0 bg-[var(--card-bg)]/20 blur-xl rounded-full" />
               </div>
               <div className="space-y-6">
                 <h2 className="serif text-6xl text-[var(--navy)] leading-tight">{quiz.meta.title}</h2>
@@ -143,7 +143,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
               </div>
               <button 
                 onClick={handleStart}
-                className="px-16 py-6 bg-[var(--navy)] text-white rounded-[2rem] text-sm font-bold uppercase tracking-[0.4em] hover:bg-[var(--holo-violet)] hover:text-[var(--navy)] transition-all shadow-2xl transform hover:scale-105 active:scale-95"
+                className="px-16 py-6 bg-[var(--navy)] text-[var(--bg-paper)] rounded-[2rem] text-sm font-bold uppercase tracking-[0.4em] hover:bg-[var(--holo-violet)] hover:text-[var(--navy)] transition-all shadow-2xl transform hover:scale-105 active:scale-95"
               >
                 Calibration starten
               </button>
@@ -163,9 +163,9 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
               </div>
 
               <div className="flex-grow space-y-12">
-                <div className="bg-white/60 backdrop-blur-sm p-10 rounded-[2.5rem] border border-[var(--stroke)] shadow-sm relative overflow-hidden">
+                <div className="bg-[var(--card-bg)]/60 backdrop-blur-sm p-10 rounded-[2.5rem] border border-[var(--stroke)] shadow-sm relative overflow-hidden">
                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
-                     <Sparkles size={120} />
+                     <Sparkles size={120} className="text-[var(--navy)]" />
                    </div>
                    <div className="text-[10px] mono uppercase text-[var(--holo-gold)] mb-6 tracking-[0.5em] font-extrabold opacity-70">
                      {questions[currentIdx].context || questions[currentIdx].scenario || 'Situation_Buffer'}
@@ -180,18 +180,18 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
                       onClick={() => handleSelect(i)}
                       className={`w-full text-left p-8 rounded-[1.8rem] border transition-all duration-500 relative group overflow-hidden ${
                         answers[currentIdx] === i 
-                          ? 'bg-[var(--navy)] border-[var(--navy)] text-white shadow-2xl scale-[1.02]' 
-                          : 'bg-white border-[var(--stroke)] text-[var(--navy)] hover:border-[var(--holo-gold)] hover:shadow-lg'
+                          ? 'bg-[var(--navy)] border-[var(--navy)] text-[var(--bg-paper)] shadow-2xl scale-[1.02]' 
+                          : 'bg-[var(--card-bg)] border-[var(--stroke)] text-[var(--navy)] hover:border-[var(--holo-gold)] hover:shadow-lg'
                       }`}
                     >
                       <div className="relative z-10 flex items-center gap-6">
-                        <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] mono font-bold ${answers[currentIdx] === i ? 'bg-white/10 border-white/20' : 'bg-[var(--bg-paper)] border-[var(--stroke)] text-[var(--muted)]'}`}>
+                        <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] mono font-bold ${answers[currentIdx] === i ? 'bg-[var(--bg-paper)]/10 border-[var(--bg-paper)]/20' : 'bg-[var(--bg-paper)] border-[var(--stroke)] text-[var(--muted)]'}`}>
                           0{i + 1}
                         </div>
                         <p className="text-[15px] font-medium leading-relaxed flex-1">{opt.text}</p>
                       </div>
                       {answers[currentIdx] === i && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[scan-shine_2s_infinite]" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--bg-paper)]/5 to-transparent -translate-x-full animate-[scan-shine_2s_infinite]" />
                       )}
                     </button>
                   ))}
@@ -202,14 +202,14 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
                 <button 
                   onClick={handleBack}
                   disabled={currentIdx === 0}
-                  className="flex-1 py-5 border border-[var(--stroke)] rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.4em] disabled:opacity-20 hover:bg-[var(--bg-paper)] transition-all flex items-center justify-center gap-3"
+                  className="flex-1 py-5 border border-[var(--stroke)] rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.4em] disabled:opacity-20 hover:bg-[var(--bg-paper)] text-[var(--navy)] transition-all flex items-center justify-center gap-3"
                 >
                   <ArrowLeft size={16} /> Zurück
                 </button>
                 <button 
                   onClick={handleNext}
                   disabled={answers[currentIdx] === undefined}
-                  className="flex-1 py-5 bg-[var(--navy)] text-white rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.4em] disabled:opacity-20 shadow-xl flex items-center justify-center gap-3 hover:bg-opacity-90"
+                  className="flex-1 py-5 bg-[var(--navy)] text-[var(--bg-paper)] rounded-2xl text-[10px] font-extrabold uppercase tracking-[0.4em] disabled:opacity-20 shadow-xl flex items-center justify-center gap-3 hover:bg-opacity-90"
                 >
                   {currentIdx === questions.length - 1 ? 'Analyse_Finish' : 'Nächster_Schritt'} <ArrowRight size={16} />
                 </button>
@@ -231,7 +231,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
                 </p>
               </div>
 
-              <div className="w-full space-y-10 bg-white p-12 rounded-[4rem] border border-[var(--stroke)] shadow-2xl relative overflow-hidden">
+              <div className="w-full space-y-10 bg-[var(--card-bg)] p-12 rounded-[4rem] border border-[var(--stroke)] shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--holo-cyan)] via-[var(--holo-gold)] to-[var(--holo-violet)]" />
                 
                 <div className="space-y-8">
@@ -261,7 +261,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onClose }) => {
               </div>
 
               <div className="space-y-6 w-full pt-10 border-t border-[var(--stroke)]">
-                <button className="w-full py-6 bg-[var(--navy)] text-white rounded-[2rem] text-xs font-extrabold uppercase tracking-[0.5em] flex items-center justify-center gap-4 shadow-2xl hover:bg-[var(--holo-violet)] hover:text-[var(--navy)] transition-all">
+                <button className="w-full py-6 bg-[var(--navy)] text-[var(--bg-paper)] rounded-[2rem] text-xs font-extrabold uppercase tracking-[0.5em] flex items-center justify-center gap-4 shadow-2xl hover:bg-[var(--holo-violet)] hover:text-[var(--navy)] transition-all">
                   <Share2 size={18} /> Signatur teilen
                 </button>
                 <button 

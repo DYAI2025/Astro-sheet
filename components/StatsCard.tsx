@@ -2,8 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { Stat } from '../types';
 import { Activity, ShieldCheck } from 'lucide-react';
+import { TRANSLATIONS } from '../constants';
 
-interface StatsCardProps { stats: Stat[]; }
+interface StatsCardProps { 
+  stats: Stat[];
+  language: 'de' | 'en';
+}
 
 const SegmentedBar: React.FC<{ value: number }> = ({ value }) => {
   const totalSegments = 20;
@@ -34,7 +38,9 @@ const SegmentedBar: React.FC<{ value: number }> = ({ value }) => {
   );
 };
 
-const StatsCard: React.FC<StatsCardProps> = ({ stats }) => {
+const StatsCard: React.FC<StatsCardProps> = ({ stats, language }) => {
+  const t = TRANSLATIONS[language];
+  
   return (
     <div className="premium-card p-14 transition-colors duration-500">
       <div className="flex flex-col lg:flex-row justify-between items-start gap-16">
@@ -43,9 +49,9 @@ const StatsCard: React.FC<StatsCardProps> = ({ stats }) => {
             <Activity className="text-[var(--holo-cyan)]" size={24} />
           </div>
           <div>
-            <h3 className="serif text-5xl font-light text-[var(--navy)] leading-tight">Biometrische Matrix</h3>
+            <h3 className="serif text-5xl font-light text-[var(--navy)] leading-tight">{t.stats.biometricTitle}</h3>
             <p className="text-sm text-[var(--muted)] mt-4 font-light leading-relaxed">
-              Deine aktuelle Resonanz wird über 5 Kernparameter abgebildet. Jede Veränderung im Transit-Feld beeinflusst diese Werte in Echtzeit.
+              {t.stats.biometricNote}
             </p>
           </div>
           <div className="flex items-center gap-3 py-3 border-y border-[var(--stroke)]">
@@ -61,7 +67,13 @@ const StatsCard: React.FC<StatsCardProps> = ({ stats }) => {
                 <div className="flex items-center gap-2">
                    <div className="w-1 h-1 rounded-full bg-[var(--holo-cyan)] opacity-0 group-hover:opacity-100 transition-opacity" />
                    <span className="mono text-[11px] font-extrabold text-[var(--navy)] uppercase tracking-[0.4em] group-hover:text-[var(--holo-cyan)] transition-colors cursor-default">
-                     {stat.label}
+                     {language === 'de' ? stat.label : (
+                       stat.label === 'Energie-Aufladung' ? 'Energy Charging' :
+                       stat.label === 'Bindung' ? 'Bonding' :
+                       stat.label === 'Kommunikation' ? 'Communication' :
+                       stat.label === 'Struktur' ? 'Structure' :
+                       stat.label === 'Analyse ↔ Intuition' ? 'Analysis ↔ Intuition' : stat.label
+                     )}
                    </span>
                 </div>
                 <span className="mono text-[11px] font-bold text-[var(--holo-gold)] tracking-[0.1em]">{stat.value}%</span>

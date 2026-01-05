@@ -1,24 +1,29 @@
 
 import React from 'react';
-import { User, Bot, Sparkles, Settings, AlertCircle, LayoutDashboard, PieChart, Moon, Sun } from 'lucide-react';
+import { User, Bot, Sparkles, Settings, AlertCircle, LayoutDashboard, PieChart, Moon, Sun, Languages } from 'lucide-react';
 import { UserProfile } from '../types';
+import { TRANSLATIONS } from '../constants';
 
 interface SidebarProps { 
   user: UserProfile; 
   theme: 'light' | 'dark';
+  language: 'de' | 'en';
   onToggleTheme: () => void;
+  onToggleLanguage: () => void;
   onNavigate: (label: string) => void;
   activeLabel: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ user, theme, onToggleTheme, onNavigate, activeLabel }) => {
+const Sidebar: React.FC<SidebarProps> = ({ user, theme, language, onToggleTheme, onToggleLanguage, onNavigate, activeLabel }) => {
+  const t = TRANSLATIONS[language];
+  
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard' },
-    { icon: User, label: 'Profil' },
-    { icon: PieChart, label: 'Quizzes' },
-    { icon: Bot, label: 'Agenten' },
-    { icon: Sparkles, label: 'Premium', premium: true },
-    { icon: Settings, label: 'Einstellungen' },
+    { icon: LayoutDashboard, label: t.nav.dashboard },
+    { icon: User, label: t.nav.profile },
+    { icon: PieChart, label: t.nav.quizzes },
+    { icon: Bot, label: t.nav.agents },
+    { icon: Sparkles, label: t.nav.premium, premium: true },
+    { icon: Settings, label: t.nav.settings },
   ];
 
   return (
@@ -33,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user, theme, onToggleTheme, onNavigat
         <div className="text-[10px] mono uppercase tracking-[0.5em] text-[var(--muted)] mt-5 font-extrabold opacity-60">SYSTEM_REFL_v2.5</div>
       </div>
 
-      <div className="bg-[var(--bg-paper)] rounded-[2.5rem] p-6 mb-20 flex items-center gap-5 border border-[var(--stroke)] group cursor-pointer hover:border-[var(--holo-gold)] hover:shadow-2xl transition-all shadow-lg relative z-10">
+      <div className="bg-[var(--bg-paper)] rounded-[2.5rem] p-6 mb-16 flex items-center gap-5 border border-[var(--stroke)] group cursor-pointer hover:border-[var(--holo-gold)] hover:shadow-2xl transition-all shadow-lg relative z-10">
         <div className="w-14 h-14 rounded-[1.5rem] bg-[var(--navy)] flex items-center justify-center text-[var(--bg-paper)] text-2xl serif shadow-2xl transform transition-transform group-hover:scale-110">
           {user.name[0]}
         </div>
@@ -63,28 +68,33 @@ const Sidebar: React.FC<SidebarProps> = ({ user, theme, onToggleTheme, onNavigat
         ))}
       </nav>
 
-      <div className="mt-auto space-y-8 relative z-10">
-        <button 
-          onClick={onToggleTheme}
-          className="w-full flex items-center justify-between px-8 py-5 rounded-[1.5rem] border border-[var(--stroke)] text-[var(--muted)] hover:text-[var(--navy)] hover:bg-[var(--bg-paper)] transition-all group shadow-sm"
-        >
-          <div className="flex items-center gap-6">
-            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-            <span className="text-[11px] font-extrabold uppercase tracking-[0.4em]">{theme === 'light' ? 'Nachtmodus' : 'Tagmodus'}</span>
-          </div>
-          <div className={`w-10 h-5 rounded-full p-1.5 flex items-center transition-colors ${theme === 'dark' ? 'bg-[var(--holo-cyan)]' : 'bg-[var(--stroke)]'}`}>
-            <div className={`w-2.5 h-2.5 rounded-full bg-white shadow-xl transition-transform ${theme === 'dark' ? 'translate-x-4' : 'translate-x-0'}`} />
-          </div>
-        </button>
+      <div className="mt-auto space-y-6 relative z-10">
+        <div className="flex gap-4">
+          <button 
+            onClick={onToggleLanguage}
+            className="flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-[1.5rem] border border-[var(--stroke)] text-[var(--muted)] hover:text-[var(--navy)] hover:bg-[var(--bg-paper)] transition-all group shadow-sm"
+          >
+            <Languages size={18} />
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.4em]">{language.toUpperCase()}</span>
+          </button>
+          
+          <button 
+            onClick={onToggleTheme}
+            className="flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-[1.5rem] border border-[var(--stroke)] text-[var(--muted)] hover:text-[var(--navy)] hover:bg-[var(--bg-paper)] transition-all group shadow-sm"
+          >
+            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.4em]">{theme === 'light' ? 'Nacht' : 'Tag'}</span>
+          </button>
+        </div>
 
         <div className="bg-[var(--bg-paper)] rounded-[2.5rem] p-10 text-[12px] leading-relaxed text-[var(--navy)]/80 border border-[var(--stroke)] shadow-inner relative overflow-hidden">
           <div className="absolute -bottom-14 -right-14 w-40 h-40 bg-[var(--holo-gold)]/10 blur-[60px] rounded-full" />
           <div className="flex items-center gap-4 mb-5 font-extrabold text-[var(--navy)] uppercase tracking-[0.3em] opacity-90">
             <AlertCircle size={16} className="text-[var(--holo-gold)]" />
-            Transparenz
+            {t.nav.transparency}
           </div>
           <p className="opacity-90 text-[11px] italic leading-relaxed font-medium">
-            Dieses Dashboard dient ausschließlich der Reflexion und Unterhaltung.
+            {t.nav.transparencyNote}
           </p>
         </div>
       </div>
