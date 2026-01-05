@@ -33,6 +33,17 @@ export interface MasterIdentity {
   bedeutung: string;
 }
 
+/**
+ * Interface representing a specific pillar in BaZi astrology (Year, Month, or Day).
+ */
+export interface BaZiPillarData {
+  label: string;
+  value: string;
+  hiddenStems: string;
+  aspect: string;
+  description: string;
+}
+
 export interface QuizItem {
   id: string;
   title: string;
@@ -47,4 +58,14 @@ export interface Agent {
   type: string;
   description: string;
   premium?: boolean;
+}
+
+export interface QuizDefinition {
+  id: string;
+  title: string;
+  subtitle: string;
+  description?: string;
+  image?: string;
+  icon?: string;
+  config: any; // The full JSON config provided
 }

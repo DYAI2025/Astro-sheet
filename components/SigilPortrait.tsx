@@ -3,61 +3,65 @@ import React from 'react';
 
 const SigilPortrait: React.FC = () => {
   return (
-    <div className="relative w-64 h-64 flex items-center justify-center">
-      <div className="absolute inset-0 bg-gradient-to-tr from-[#22D3EE]/5 to-[#C5A059]/5 blur-3xl rounded-full" />
+    <div className="relative w-80 h-80 flex items-center justify-center">
+      {/* Background soft glow */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-[var(--holo-cyan)]/10 to-[var(--holo-gold)]/10 blur-[100px] rounded-full" />
       
-      {/* Rotating Background Ring */}
-      <div className="absolute w-full h-full animate-spin-slow opacity-20">
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-           <circle cx="100" cy="100" r="95" fill="none" stroke="#C5A059" strokeWidth="0.5" strokeDasharray="2 6" />
-           <circle cx="100" cy="100" r="85" fill="none" stroke="#22D3EE" strokeWidth="0.2" />
-        </svg>
-      </div>
-
-      <svg viewBox="0 0 200 200" className="w-full h-full relative z-10">
+      {/* The Frame - Matching the geometric style of the screenshot */}
+      <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 overflow-visible">
         <defs>
-          <radialGradient id="centralGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#C5A059" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#C5A059" stopOpacity="0" />
-          </radialGradient>
+          <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
         </defs>
 
-        {/* Intricate Geometric Lattice */}
-        <g opacity="0.4">
-          <circle cx="100" cy="100" r="60" fill="none" stroke="#E4E4E7" strokeWidth="0.5" />
-          <path d="M100,20 L180,100 L100,180 L20,100 Z" fill="none" stroke="#C5A059" strokeWidth="0.5" />
-          <path d="M43,43 L157,43 L157,157 L43,157 Z" fill="none" stroke="#22D3EE" strokeWidth="0.5" transform="rotate(45 100 100)" />
-          
-          {/* DNA Spikes / Rays */}
-          {[0, 45, 90, 135, 180, 225, 270, 315].map(deg => (
-            <line 
-              key={deg} 
-              x1="100" y1="40" x2="100" y2="10" 
-              stroke="#A1A1AA" 
-              strokeWidth="0.3" 
-              transform={`rotate(${deg} 100 100)`} 
-            />
-          ))}
-        </g>
+        {/* Outer subtle ivory circle */}
+        <circle cx="100" cy="100" r="98" fill="rgba(255, 255, 255, 0.4)" stroke="var(--stroke)" strokeWidth="0.5" />
+
+        {/* Square Frame */}
+        <rect x="50" y="50" width="100" height="100" fill="none" stroke="var(--holo-gold)" strokeWidth="0.5" opacity="0.6" />
         
-        {/* Core Glow */}
-        <circle cx="100" cy="100" r="10" fill="url(#centralGlow)" className="animate-pulse" />
-        <circle cx="100" cy="100" r="6" fill="#FFFFFF" className="glow-gold" />
+        {/* Central Vertical Axis */}
+        <line x1="100" y1="50" x2="100" y2="150" stroke="var(--navy)" strokeWidth="0.5" opacity="0.4" />
         
-        {/* Connection Nodes */}
-        <g fill="#22D3EE">
-          <circle cx="100" cy="20" r="1.5" />
-          <circle cx="180" cy="100" r="1.5" />
-          <circle cx="100" cy="180" r="1.5" />
-          <circle cx="20" cy="100" r="1.5" />
+        {/* Top Alignment Sun */}
+        <circle cx="100" cy="58" r="3.5" fill="var(--holo-gold)" filter="url(#softGlow)" />
+
+        {/* Symmetric Arcs / Crescents */}
+        <g stroke="var(--navy)" fill="none" strokeWidth="0.6" opacity="0.5">
+          {/* Left Crescent */}
+          <path d="M60,60 Q40,100 60,140" />
+          {/* Right Crescent */}
+          <path d="M140,60 Q160,100 140,140" />
+          {/* Large connecting arcs */}
+          <path d="M30,100 Q100,20 170,100" stroke="var(--holo-gold)" strokeWidth="0.3" />
+          <path d="M45,100 Q100,160 155,100" stroke="var(--holo-cyan)" strokeWidth="0.3" />
         </g>
 
-        {/* Outer Rune Ring Elements */}
-        <g fill="none" stroke="#C5A059" strokeWidth="1" opacity="0.6">
-           <path d="M100,5 A95,95 0 0,1 195,100" />
-           <path d="M100,195 A95,95 0 0,1 5,100" />
+        {/* Stylized Symbol Placeholder (Rooster Sigil) */}
+        <g transform="translate(65, 65) scale(0.35)" stroke="var(--navy)" fill="none" strokeWidth="1.5">
+          {/* Simplified Line Art Rooster inspired by the screenshot */}
+          <path d="M100,50 L120,80 L100,110 L80,80 Z" stroke="var(--holo-gold)" />
+          <path d="M100,110 C120,130 150,110 160,80" />
+          <path d="M100,110 C80,130 50,110 40,80" />
+          <path d="M100,50 C110,30 130,30 140,50" />
+          <path d="M100,50 C90,30 70,30 60,50" />
+          {/* Beak/Head Area */}
+          <path d="M100,70 L110,75 L100,80" />
+          <circle cx="95" cy="73" r="2" fill="var(--navy)" />
         </g>
+
+        {/* Diagonal crossing lines for extra geometry */}
+        <line x1="60" y1="140" x2="140" y2="60" stroke="var(--stroke)" strokeWidth="0.5" />
+        <line x1="60" y1="60" x2="140" y2="140" stroke="var(--stroke)" strokeWidth="0.5" />
       </svg>
+      
+      {/* Identity Label Overlay */}
+      <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 whitespace-nowrap">
+        <div className="mono text-[8px] font-bold text-[var(--holo-gold)] uppercase tracking-[0.6em] text-center mb-1">MASTER_IDENTITY_PROTOCOL</div>
+        <div className="w-12 h-px bg-gradient-to-r from-transparent via-[var(--stroke)] to-transparent mx-auto"></div>
+      </div>
     </div>
   );
 };
