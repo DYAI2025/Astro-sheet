@@ -92,9 +92,9 @@ const QuizzesPage: React.FC<QuizzesPageProps> = ({ language }) => {
                 <div 
                   key={quiz.id}
                   onClick={() => quiz.config && setActiveQuiz(quiz.config)}
-                  className={`bg-[var(--card-bg)]/80 backdrop-blur-sm border border-[var(--stroke)] rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 flex flex-col items-center text-center group transition-all duration-700 relative overflow-hidden min-h-[320px] md:min-h-[400px] ${quiz.config ? 'cursor-pointer hover:border-[var(--holo-gold)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1' : 'opacity-60'}`}
+                  className={`bg-[var(--card-bg)] border border-[var(--stroke)] rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 flex flex-col items-center text-center group transition-all duration-700 relative overflow-hidden min-h-[320px] md:min-h-[400px] ${quiz.config ? 'cursor-pointer hover:border-[var(--holo-gold)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:-translate-y-1' : 'opacity-60'}`}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[var(--bg-paper)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                   
                   <div className="relative mb-8 md:mb-12">
                     <div className="w-20 md:w-28 h-20 md:h-28 rounded-[1.8rem] md:rounded-[2.2rem] bg-[var(--bg-paper)] flex items-center justify-center border border-[var(--stroke)] relative z-10 group-hover:scale-105 group-hover:rotate-3 transition-all duration-500 shadow-sm">
@@ -109,7 +109,7 @@ const QuizzesPage: React.FC<QuizzesPageProps> = ({ language }) => {
                   </div>
 
                   <div className="w-full pt-6 md:pt-8 border-t border-[var(--stroke)] relative z-10">
-                    <span className={`text-[9px] md:text-[10px] mono uppercase font-extrabold tracking-[0.3em] md:tracking-[0.4em] transition-all duration-500 flex items-center justify-center gap-2 md:gap-3 ${quiz.config ? 'text-[var(--navy)] group-hover:text-[var(--holo-gold)]' : 'text-gray-300'}`}>
+                    <span className={`text-[9px] md:text-[10px] mono uppercase font-extrabold tracking-[0.3em] md:tracking-[0.4em] transition-all duration-500 flex items-center justify-center gap-2 md:gap-3 ${quiz.config ? 'text-[var(--navy)] group-hover:text-[var(--holo-gold)]' : 'text-[var(--muted)] opacity-50'}`}>
                       {quiz.config ? (
                         <>
                           {language === 'de' ? 'Analyse starten' : 'Start Analysis'} <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
@@ -124,7 +124,7 @@ const QuizzesPage: React.FC<QuizzesPageProps> = ({ language }) => {
         ))}
 
         <div className="pt-24 md:pt-40">
-           <div className="bg-[var(--card-bg)]/80 backdrop-blur-xl border border-[var(--stroke)] rounded-[3rem] md:rounded-[4rem] p-10 md:p-20 flex flex-col lg:flex-row items-center gap-12 md:gap-20 group hover:shadow-xl transition-all duration-700 relative overflow-hidden">
+           <div className="bg-[var(--card-bg)] border border-[var(--stroke)] rounded-[3rem] md:rounded-[4rem] p-10 md:p-20 flex flex-col lg:flex-row items-center gap-12 md:gap-20 group hover:shadow-xl transition-all duration-700 relative overflow-hidden">
              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--holo-cyan),transparent_70%)] opacity-0 group-hover:opacity-5 transition-opacity" />
              
              <div className="w-40 md:w-56 h-40 md:h-56 rounded-full border border-[var(--stroke)] bg-[var(--bg-paper)] flex items-center justify-center p-6 md:p-10 relative shrink-0">

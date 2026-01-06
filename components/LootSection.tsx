@@ -56,7 +56,7 @@ const LootSection: React.FC<LootSectionProps> = ({ onNavigate, language }) => {
             }`}
           >
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-10 shadow-inner transition-all group-hover:scale-110 ${perk.active ? 'bg-[var(--bg-paper)] border border-[var(--stroke)]' : 'bg-transparent border border-dashed border-[var(--stroke)] opacity-40'}`}>
-               <div className="absolute inset-0 bg-[var(--card-bg)]/40 rounded-2xl pointer-events-none" />
+               <div className="absolute inset-0 bg-white/5 rounded-2xl pointer-events-none" />
                {perk.active ? (
                  <Star 
                     size={28} 

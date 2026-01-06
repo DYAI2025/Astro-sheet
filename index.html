@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Bright Pastel Palette */
+      /* Bright Pastel Palette - Light Mode */
       --bg-paper: #FEFDF9;
       --navy: #1F2937;
       --card-bg: #FFFFFF;
@@ -31,18 +31,19 @@
       --spacing-unit: 8px;
     }
 
-    /* Dark Mode Variable Overrides for High Contrast */
+    /* Dark Mode Variable Overrides - High Contrast & Depth */
     .dark {
-      --bg-paper: #08090B;
-      --navy: #FFFFFF; /* Maximum contrast for headers */
-      --card-bg: #121418;
-      --muted: #D1D5DB; /* Lighter gray for readability */
-      --stroke: #2A2D35;
-      --input-bg: #1A1D23;
+      --bg-paper: #05070A;
+      --navy: #F9FAFB; /* Off-white for maximum readability */
+      --card-bg: #0F1115; /* Deeper card background */
+      --muted: #9CA3AF; /* Light gray for secondary text */
+      --stroke: #1F2937; /* Darker borders */
+      --input-bg: #111827;
       
-      --holo-violet: #A78BFA;
-      --holo-cyan: #22D3EE;
-      --holo-gold: #FBBF24;
+      --holo-violet: #8B5CF6;
+      --holo-cyan: #06B6D4;
+      --holo-gold: #D97706;
+      --holo-yellow: #CA8A04;
     }
 
     /* Global transition for theme changes */
@@ -52,7 +53,6 @@
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Prevent transition jumps on specific layout-critical elements if necessary */
     .no-transition {
       transition: none !important;
     }
@@ -88,7 +88,7 @@
 
     .dark .watercolor-blob {
       mix-blend-mode: screen;
-      opacity: 0.12;
+      opacity: 0.08;
     }
 
     @keyframes float-blob {
@@ -96,7 +96,6 @@
       to { transform: translate(10%, 8%) scale(1.15); }
     }
 
-    /* Shimmering Holo Edge Animation */
     @keyframes holo-shimmer {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -125,7 +124,7 @@
     }
     
     .dark .premium-card {
-      box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.6);
     }
 
     .premium-card::after {
@@ -149,7 +148,7 @@
       font-weight: 300;
     }
 
-    .dark .cluster-title { opacity: 0.05; color: #FFFFFF; }
+    .dark .cluster-title { opacity: 0.08; color: #FFFFFF; }
 
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .animate-spin-slow { animation: rotate 240s linear infinite; }

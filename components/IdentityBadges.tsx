@@ -193,7 +193,7 @@ const BaZiPillar: React.FC<{ data: BaZiPillarData; active: boolean; onClick: () 
                 <span className={`mono text-[8px] md:text-[9px] font-extrabold uppercase tracking-[0.3em] block mb-1 transition-colors ${active ? 'text-white/60' : 'text-[var(--muted)]'}`}>
                   {data.label} Pillar
                 </span>
-                <span className={`text-lg md:text-2xl font-bold tracking-tight transition-colors serif truncate block ${active ? 'text-[var(--bg-paper)]' : 'text-[var(--navy)]'}`}>
+                <span className={`text-lg md:text-2xl font-bold tracking-tight transition-colors serif truncate block ${active ? 'text-white' : 'text-[var(--navy)]'}`}>
                   {data.value}
                 </span>
              </div>

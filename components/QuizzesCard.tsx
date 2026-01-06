@@ -49,7 +49,7 @@ const QuizzesCard: React.FC<QuizzesCardProps> = ({ quizzes, onNavigate, language
                 </p>
                 <button 
                   onClick={(e) => { e.stopPropagation(); onNavigate?.(); }}
-                  className="flex items-center justify-center gap-5 w-full py-5 bg-[var(--bg-paper)] hover:bg-[var(--navy)] hover:text-[var(--bg-paper)] rounded-2xl border border-[var(--stroke)] text-[10px] font-extrabold uppercase tracking-[0.4em] transition-all group/btn shadow-sm"
+                  className="flex items-center justify-center gap-5 w-full py-5 bg-[var(--bg-paper)] hover:bg-[var(--navy)] hover:text-white rounded-2xl border border-[var(--stroke)] text-[10px] font-extrabold uppercase tracking-[0.4em] transition-all group/btn shadow-sm"
                 >
                   {t.inventory.continue}
                   <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />

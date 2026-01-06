@@ -47,8 +47,8 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
         {agents.map((agent) => {
           const isVika = agent.id === 'vika';
           const gradientClass = isVika 
-            ? 'bg-gradient-to-br from-[var(--card-bg)] via-[var(--card-bg)] to-[var(--holo-violet)]/10' 
-            : 'bg-gradient-to-br from-[var(--card-bg)] via-[var(--card-bg)] to-[var(--holo-gold)]/10';
+            ? 'bg-gradient-to-br from-white via-white to-[#F5F3FF]' 
+            : 'bg-gradient-to-br from-white via-white to-[#FFFBEB]';
 
           return (
             <div 
@@ -58,7 +58,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
               {/* Card Header */}
               <div className="flex justify-between items-start mb-8 relative z-10">
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-full bg-[var(--bg-paper)] border border-[var(--stroke)] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-500">
+                  <div className="w-14 h-14 rounded-full bg-white border border-[var(--stroke)] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-500">
                     <Sigma size={20} className="text-[var(--navy)]" />
                   </div>
                   <div>
@@ -70,7 +70,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
                     </h4>
                   </div>
                 </div>
-                <button className="w-10 h-10 rounded-full bg-[var(--bg-paper)] flex items-center justify-center hover:bg-[var(--card-bg)] transition-colors border border-[var(--stroke)]">
+                <button className="w-10 h-10 rounded-full bg-[#F3F4F6]/50 flex items-center justify-center hover:bg-white transition-colors">
                   <MoreHorizontal size={18} className="text-[var(--muted)]" />
                 </button>
               </div>
@@ -94,7 +94,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-10 relative z-10">
                 {agent.tags?.map((tag) => (
-                  <span key={tag} className="px-4 py-1.5 bg-[var(--bg-paper)] rounded-full text-[11px] font-medium text-[var(--muted)] border border-[var(--stroke)]">
+                  <span key={tag} className="px-4 py-1.5 bg-[#F3F4F6]/60 rounded-full text-[11px] font-medium text-[var(--muted)] border border-[var(--stroke)]">
                     {language === 'de' ? tag : (
                       tag === 'präzise' ? 'precise' :
                       tag === 'systemisch' ? 'systemic' :
@@ -108,7 +108,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
               </div>
 
               {/* Stats Block */}
-              <div className="bg-[var(--bg-paper)] p-6 rounded-[2rem] border border-[var(--stroke)] mb-8 relative z-10 flex justify-between items-center group/stats">
+              <div className="bg-[#F9FAFB]/80 p-6 rounded-[2rem] border border-[var(--stroke)] mb-8 relative z-10 flex justify-between items-center group/stats">
                 <div>
                   <div className="mono text-[10px] text-[var(--muted)] uppercase tracking-widest font-bold mb-1">
                     {language === 'de' ? agent.statLabel : (agent.statLabel === 'Resonanz' ? 'Resonance' : 'Energy')}
@@ -117,7 +117,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
                     {agent.statValue}
                   </div>
                 </div>
-                <div className="w-12 h-12 rounded-full bg-[var(--card-bg)] border border-[var(--stroke)] flex items-center justify-center shadow-sm group-hover/stats:rotate-12 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-white border border-[var(--stroke)] flex items-center justify-center shadow-sm group-hover/stats:rotate-12 transition-transform">
                   {isVika ? <Radio size={20} className="text-[var(--navy)]" /> : <Sparkles size={20} className="text-[var(--navy)]" />}
                 </div>
               </div>
@@ -126,7 +126,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
               <div className="relative z-10">
                 <button 
                   onClick={() => setActiveAgent(agent.id)}
-                  className="w-full py-5 bg-[#020617] text-white rounded-[1.8rem] text-[12px] font-bold flex items-center justify-between px-8 hover:bg-[var(--navy)] hover:text-[var(--bg-paper)] transition-all shadow-xl group/btn"
+                  className="w-full py-5 bg-[#020617] text-white rounded-[1.8rem] text-[12px] font-bold flex items-center justify-between px-8 hover:bg-[var(--navy)] transition-all shadow-xl group/btn"
                 >
                   <span className="flex items-center gap-4">
                     {agent.premium && <Mic size={16} className="text-[var(--holo-cyan)]" />}
@@ -137,7 +137,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
               </div>
 
               {/* Decorative Blur Backgrounds */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--card-bg)] opacity-40 blur-3xl pointer-events-none" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-40 blur-3xl pointer-events-none" />
               {isVika && (
                 <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-[var(--holo-violet)]/10 blur-3xl rounded-full pointer-events-none" />
               )}
@@ -148,12 +148,12 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
 
       {activeAgent && (
         <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center animate-reveal p-6">
-           <div className="bg-[var(--card-bg)] w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl border border-[var(--stroke)] relative">
+           <div className="bg-white w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl border border-[var(--stroke)] relative">
               <button 
                 onClick={() => setActiveAgent(null)}
                 className="absolute top-8 right-8 p-2 hover:bg-black/5 rounded-full transition-colors z-20"
               >
-                <MoreHorizontal size={24} className="text-[var(--navy)]" />
+                <MoreHorizontal size={24} />
               </button>
               <div className="p-16 text-center space-y-10">
                  <div className="w-24 h-24 rounded-full bg-[var(--navy)] mx-auto flex items-center justify-center shadow-xl">
@@ -177,7 +177,7 @@ const AgentsSection: React.FC<AgentsSectionProps> = ({ agents, language }) => {
                  </div>
                  <button 
                    onClick={() => setActiveAgent(null)}
-                   className="w-full py-5 bg-[var(--navy)] text-[var(--bg-paper)] rounded-2xl text-[11px] font-extrabold uppercase tracking-[0.4em]"
+                   className="w-full py-5 bg-[var(--navy)] text-white rounded-2xl text-[11px] font-extrabold uppercase tracking-[0.4em]"
                  >
                    {t.agents.disconnect}
                  </button>

@@ -11,7 +11,7 @@ const AgentsPage: React.FC<AgentsPageProps> = ({ language }) => {
   const t = TRANSLATIONS[language];
 
   return (
-    <div className="min-h-screen py-16 md:py-32 px-6 md:px-12 bg-[var(--bg-paper)] relative overflow-hidden transition-all duration-700">
+    <div className="min-h-screen py-16 md:py-32 px-6 md:px-12 bg-[#FEFDF9] relative overflow-hidden transition-all duration-700">
       {/* Background Watermark */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.02] select-none overflow-hidden flex flex-col items-center justify-center">
         <div className="cluster-title text-center whitespace-nowrap text-6xl md:text-8xl lg:text-9xl uppercase">
@@ -44,7 +44,7 @@ const AgentsPage: React.FC<AgentsPageProps> = ({ language }) => {
 
         {/* Footer info box */}
         <div className="pt-20">
-          <div className="bg-[var(--card-bg)]/80 backdrop-blur-xl border border-[var(--stroke)] rounded-[3rem] p-10 md:p-16 flex flex-col items-center text-center space-y-8 relative overflow-hidden group">
+          <div className="bg-white/80 backdrop-blur-xl border border-[var(--stroke)] rounded-[3rem] p-10 md:p-16 flex flex-col items-center text-center space-y-8 relative overflow-hidden group">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,var(--holo-violet),transparent_60%)] opacity-[0.03]" />
             <div className="w-20 h-20 rounded-[1.5rem] bg-[var(--bg-paper)] border border-[var(--stroke)] flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform duration-500">
                <div className="w-3 h-3 bg-[var(--holo-gold)] rounded-full animate-pulse shadow-[0_0_10px_var(--holo-gold)]" />
