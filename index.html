@@ -5,182 +5,206 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Astro Character Dashboard</title>
+  <script>
+    tailwind = window.tailwind || {}
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              50: '#EAF4F0',
+              100: '#D2E7DE',
+              200: '#A6CFBD',
+              300: '#79B79C',
+              400: '#4D9F7B',
+              500: '#1E5C4A',
+              600: '#184C3D',
+              700: '#133D31',
+              800: '#0F2F26',
+              900: '#0A201A',
+              950: '#051310'
+            },
+            gold: {
+              50: '#FFFBE6',
+              100: '#FFF3B0',
+              200: '#FFE680',
+              300: '#FFDC4D',
+              400: '#FFD700',
+              500: '#E6C200',
+              600: '#B89400',
+              700: '#806800',
+              800: '#4D3F00',
+              900: '#332A00'
+            },
+            cyan: {
+              50: '#E6FAFF',
+              100: '#B3F1FF',
+              200: '#80E8FF',
+              300: '#4DDEFF',
+              400: '#00B4D8',
+              500: '#0096B3',
+              600: '#00788F',
+              700: '#005A6B',
+              800: '#003C47',
+              900: '#001E23'
+            },
+            tangerine: {
+              50: '#FFECEC',
+              100: '#FFD0D0',
+              200: '#FFB3B3',
+              300: '#FF9696',
+              400: '#FF6B6B',
+              500: '#E85858',
+              600: '#C94747',
+              700: '#9A3535',
+              800: '#6B2424',
+              900: '#3D1414'
+            }
+          },
+          boxShadow: {
+            soft: '0 4px 6px rgba(0, 0, 0, 0.05)'
+          },
+          maxWidth: {
+            '8xl': '88rem'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+            brand: ['"Caveat Brush"', 'Brush Script MT', 'Segoe Script', 'cursive']
+          }
+        }
+      }
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Bright Pastel Palette - Light Mode */
-      --bg-paper: #FEFDF9;
-      --navy: #1F2937;
-      --card-bg: #FFFFFF;
-      --muted: #6B7280;
-      --stroke: #F1EFE9;
-      
-      --holo-violet: #DCD4F5;
-      --holo-cyan: #B6EDF2;
-      --holo-gold: #FBE4A1;
-      --holo-yellow: #FFF9C4;
-      
-      --input-bg: #FCFAF5;
-      --transition-speed: 0.4s;
-      
-      /* Golden Ratio Spacing */
-      --phi: 1.618;
-      --spacing-unit: 8px;
+      --flashclip-forest: #1E5C4A;
+      --flashclip-gold: #FFD700;
+      --flashclip-cyan: #00B4D8;
+      --flashclip-tangerine: #FF6B6B;
+      --flashclip-border: #193F34;
+      --flashclip-radius: 8px;
+      --flashclip-shadow-soft: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
 
-    /* Dark Mode Variable Overrides - High Contrast & Depth */
-    .dark {
-      --bg-paper: #05070A;
-      --navy: #F9FAFB; /* Off-white for maximum readability */
-      --card-bg: #0F1115; /* Deeper card background */
-      --muted: #9CA3AF; /* Light gray for secondary text */
-      --stroke: #1F2937; /* Darker borders */
-      --input-bg: #111827;
-      
-      --holo-violet: #8B5CF6;
-      --holo-cyan: #06B6D4;
-      --holo-gold: #D97706;
-      --holo-yellow: #CA8A04;
-    }
-
-    /* Global transition for theme changes */
     *, *::before, *::after {
-      transition-property: background-color, border-color, color, fill, stroke, box-shadow, opacity;
-      transition-duration: var(--transition-speed);
-      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      border-color: var(--flashclip-border);
     }
 
-    .no-transition {
-      transition: none !important;
+    html {
+      color-scheme: dark;
+      scroll-behavior: smooth;
+      background-color: #000;
     }
 
     body {
-      font-family: 'Inter', sans-serif;
-      color: var(--navy);
-      background-color: var(--bg-paper);
-      overflow-x: hidden;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      color: #E2E8F0;
+      background-color: #000;
       min-height: 100vh;
-    }
-    
-    .serif { font-family: 'Cormorant Garamond', serif; }
-    .mono { font-family: 'IBM Plex Mono', monospace; }
-
-    /* Watercolor Texture Background */
-    .watercolor-canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -1;
-      overflow: hidden;
+      margin: 0;
+      overflow-x: hidden;
+      font-feature-settings: 'cv11', 'ss01';
+      line-height: 1.6;
     }
 
-    .watercolor-blob {
-      position: absolute;
-      filter: blur(80px);
-      opacity: 0.4;
-      border-radius: 50%;
-      mix-blend-mode: multiply;
-      animation: float-blob 25s ease-in-out infinite alternate;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    .dark .watercolor-blob {
-      mix-blend-mode: screen;
-      opacity: 0.08;
+    .font-brand {
+      font-family: 'Caveat Brush', 'Brush Script MT', 'Segoe Script', cursive;
+      letter-spacing: 0.01em;
     }
 
-    @keyframes float-blob {
-      from { transform: translate(0, 0) scale(1); }
-      to { transform: translate(10%, 8%) scale(1.15); }
+    .grid-overlay {
+      background-image: linear-gradient(to right, rgba(0, 180, 216, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 180, 216, 0.08) 1px, transparent 1px);
+      background-size: 8.333% 24px;
     }
 
-    @keyframes holo-shimmer {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .glass-card {
+      background-color: rgba(10, 32, 26, 0.4);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(15, 47, 38, 0.85);
+      border-radius: 0.75rem;
+      box-shadow: var(--flashclip-shadow-soft);
     }
 
-    .bg-pattern {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image: 
-        radial-gradient(circle at 15% 20%, var(--navy) 0.8px, transparent 0.8px),
-        radial-gradient(circle at 85% 15%, var(--navy) 0.6px, transparent 0.6px);
-      background-size: 400px 400px;
-      opacity: 0.08;
-    }
-
-    .premium-card {
-      background: var(--card-bg);
-      border: 1px solid var(--stroke);
-      border-radius: 2.5rem;
+    .btn-primary,
+    .btn-secondary {
       position: relative;
-      overflow: hidden;
-      box-shadow: 0 15px 45px -15px rgba(0, 0, 0, 0.05);
-    }
-    
-    .dark .premium-card {
-      box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.6);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border-radius: var(--flashclip-radius);
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      transition: transform 150ms ease, opacity 150ms ease;
+      will-change: transform, opacity;
+      box-shadow: var(--flashclip-shadow-soft);
     }
 
-    .premium-card::after {
+    .btn-primary::after,
+    .btn-secondary::after {
       content: '';
       position: absolute;
       inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 2px rgba(255, 215, 0, 0.95);
+      opacity: 0;
+      transition: opacity 150ms ease;
       pointer-events: none;
-      border-radius: 2.5rem;
-      box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.03);
-      z-index: 5;
     }
 
-    .cluster-title {
-      font-size: clamp(4rem, 10vw, 8rem);
-      line-height: 1;
-      opacity: 0.03;
-      pointer-events: none;
-      user-select: none;
-      letter-spacing: 0.35em;
-      color: var(--navy);
-      font-weight: 300;
+    .btn-primary {
+      background-color: var(--flashclip-gold);
+      color: #051310;
     }
 
-    .dark .cluster-title { opacity: 0.08; color: #FFFFFF; }
-
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .animate-spin-slow { animation: rotate 240s linear infinite; }
-    
-    @keyframes revealUp {
-      from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
-      to { opacity: 1; transform: translateY(0); filter: blur(0); }
-    }
-    .animate-reveal { animation: revealUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-    @keyframes scan-shine {
-      0% { left: -150%; opacity: 0; }
-      20% { opacity: 0.4; }
-      80% { opacity: 0.4; }
-      100% { left: 150%; opacity: 0; }
-    }
-    .scan-shine-effect {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      width: 50%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-      transform: skewX(-25deg);
-      pointer-events: none;
-      z-index: 20;
-      animation: scan-shine 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 215, 0, 0.7);
+      color: var(--flashclip-gold);
+      box-shadow: none;
     }
 
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg-paper); }
-    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 12px; }
-    .dark ::-webkit-scrollbar-thumb { background: #374151; }
+    @media (prefers-reduced-motion: no-preference) {
+      .btn-primary:hover,
+      .btn-secondary:hover {
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-primary:hover::after,
+    .btn-secondary:hover::after {
+      opacity: 1;
+    }
+
+    .btn-primary:active,
+    .btn-secondary:active {
+      transform: translateY(0);
+      opacity: 0.95;
+    }
+
+    :focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.95), 0 0 0 4px rgba(0, 0, 0, 1);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 <script type="importmap">
 {
@@ -194,13 +218,8 @@
 }
 </script>
 </head>
-<body>
-  <div class="watercolor-canvas">
-    <div class="watercolor-blob" style="width: 70vw; height: 70vw; background: var(--holo-yellow); top: -25%; left: -15%;"></div>
-    <div class="watercolor-blob" style="width: 55vw; height: 55vw; background: var(--holo-cyan); bottom: -15%; right: -10%; animation-delay: -6s;"></div>
-    <div class="watercolor-blob" style="width: 45vw; height: 45vw; background: var(--holo-gold); top: 35%; right: 15%; animation-delay: -12s;"></div>
-  </div>
-  <div class="bg-pattern"></div>
+<body class="bg-black">
   <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
